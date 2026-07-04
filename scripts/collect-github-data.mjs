@@ -117,21 +117,31 @@ async function collectWorkQueues() {
   return byName;
 }
 
-async function contentText(fullName, ref, candidates) {
-  for (const candidate of candidates) {
-    const url = `${API}/repos/${fullName}/contents/${encodeURIComponent(candidate).replaceAll('%2F', '/')}?ref=${encodeURIComponent(ref)}`;
-    const data = await request(url, { optional: true });
-    if (data?.content) {
-      return Buffer.from(data.content, data.encoding === 'base64' ? 'base64' : 'utf8').toString('utf8');
-    }
-    if (data) return '';
-  }
-  return null;
+// Fetch the whole file listing in one call instead of probing each candidate
+// path separately. This keeps the collector well under the GITHUB_TOKEN
+// installation rate limit (~1000 requests/hour per repository); per-file
+// `contents` probes previously spent ~15 requests per repository.
+async function repoTree(fullName, ref) {
+  if (!ref) return null;
+  const data = await request(`${API}/repos/${fullName}/git/trees/${encodeURIComponent(ref)}?recursive=1`, { optional: true });
+  if (!data?.tree) return null;
+  return new Set(data.tree.filter((e) => e.type === 'blob').map((e) => e.path));
 }
 
-async function hasPath(fullName, ref, candidates) {
-  const text = await contentText(fullName, ref, candidates);
-  return text !== null;
+// null tree = unknown (return null, not a false negative); otherwise true/false.
+function treeHas(tree, candidates) {
+  if (!tree) return null;
+  return candidates.some((c) => tree.has(c));
+}
+
+async function codeownersFromTree(fullName, tree) {
+  if (!tree) return { has: null, owners: [] };
+  const pathFound = ['CODEOWNERS', '.github/CODEOWNERS', 'docs/CODEOWNERS'].find((p) => tree.has(p));
+  if (!pathFound) return { has: false, owners: [] };
+  const url = `${API}/repos/${fullName}/contents/${pathFound}`;
+  const data = await request(url, { optional: true });
+  const text = data?.content ? Buffer.from(data.content, data.encoding === 'base64' ? 'base64' : 'utf8').toString('utf8') : '';
+  return { has: true, owners: parseCodeowners(text) };
 }
 
 // Extract owner handles (@user, @org/team) from a CODEOWNERS file. This is
@@ -206,16 +216,12 @@ for (const repo of repos) {
   const fullName = repo.full_name;
   const ref = repo.default_branch;
   const queue = workQueues.get(repo.name) ?? { openIssues: null, openPullRequests: null, stalePullRequests: null };
-  const [workflow, protection, readme, contributing, codeownersText, security, dependabot, renovate] = await Promise.all([
+  const [workflow, protection, tree] = await Promise.all([
     latestWorkflowConclusion(fullName),
     branchProtection(fullName, ref),
-    contentText(fullName, ref, ['README.md', 'README.rst', 'README.txt']),
-    contentText(fullName, ref, ['CONTRIBUTING.md', 'Documentation/Contribution/Index.rst']),
-    contentText(fullName, ref, ['CODEOWNERS', '.github/CODEOWNERS', 'docs/CODEOWNERS']),
-    hasPath(fullName, ref, ['SECURITY.md', '.github/SECURITY.md']),
-    hasPath(fullName, ref, ['.github/dependabot.yml', '.github/dependabot.yaml']),
-    hasPath(fullName, ref, ['renovate.json', '.github/renovate.json', '.renovaterc'])
+    repoTree(fullName, ref)
   ]);
+  const codeowners = await codeownersFromTree(fullName, tree);
 
   output.push({
     name: repo.name,
@@ -242,13 +248,13 @@ for (const repo of repos) {
     allowRebaseMerge: repo.allow_rebase_merge ?? null,
     allowAutoMerge: repo.allow_auto_merge ?? null,
     branchProtection: protection,
-    hasReadme: readme !== null,
-    hasContributing: contributing !== null,
-    hasCodeowners: codeownersText !== null,
-    hasSecurity: security,
-    hasDependabot: dependabot,
-    hasRenovate: renovate,
-    codeownersOwners: parseCodeowners(codeownersText),
+    hasReadme: treeHas(tree, ['README.md', 'README.rst', 'README.txt']),
+    hasContributing: treeHas(tree, ['CONTRIBUTING.md', 'Documentation/Contribution/Index.rst']),
+    hasCodeowners: codeowners.has,
+    hasSecurity: treeHas(tree, ['SECURITY.md', '.github/SECURITY.md']),
+    hasDependabot: treeHas(tree, ['.github/dependabot.yml', '.github/dependabot.yaml']),
+    hasRenovate: treeHas(tree, ['renovate.json', '.github/renovate.json', '.renovaterc']),
+    codeownersOwners: codeowners.owners,
     topics: repo.topics ?? [],
     derivedCategory: deriveCategory(repo),
     derivedLifecycle: deriveLifecycle(repo),
