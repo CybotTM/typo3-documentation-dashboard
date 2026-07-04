@@ -12,11 +12,12 @@ The dashboard is meant to help maintainers, new team members and occasional cont
 
 ## Current state
 
-This package contains all three intended iterations:
+The dashboard is a single, self-contained, tabbed page (Overview, Repositories, Needs attention, People & channels, Relationships, Contribute & fix, Data provenance):
 
-1. **Static map**: `src/index.html` renders repository, people, rules and communication data.
-2. **Live GitHub operations data**: `scripts/collect-github-data.mjs` collects repository metadata, PR/issue counts, workflow signals and repository file probes.
-3. **Governance/readiness signals**: the dashboard highlights missing curated contacts, CODEOWNERS, contributor files, stale PRs, stale activity and optional branch-protection data when the token can read it.
+1. **Live GitHub operations data**: `scripts/collect-github-data.mjs` collects repository metadata, accurate open issue/PR and stale-PR counts (via GraphQL), workflow signals, repository file probes and CODEOWNERS owners.
+2. **Orientation**: repositories are linked to GitHub, work-queue counts deep-link to filtered PR/issue lists, people link to their GitHub profiles, and channels/rules link to their canonical URLs. Category and lifecycle are inferred from generated signals when not curated, and marked `inferred`.
+3. **Governance/readiness signals**: highlights repositories missing curated contacts, CODEOWNERS, contributor files, stale PRs or recent activity, grouped per repository, with concrete fix guidance.
+4. **Archived repositories are hidden by default** across every tab (toggle on the Repositories tab).
 
 The checked-in `data/generated/repositories.json` is only seed fallback data. Run the collector in a real repository with a GitHub token to replace it.
 

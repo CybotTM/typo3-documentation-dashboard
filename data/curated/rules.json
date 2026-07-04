@@ -4,10 +4,20 @@
     "name": "Documentation contribution workflow",
     "category": "contribution",
     "appliesTo": ["all documentation repositories"],
-    "status": "needs-canonical-url",
-    "url": null,
+    "status": "active",
+    "url": "https://docs.typo3.org/m/typo3/guide-contributionworkflow/main/en-us/",
     "owner": "documentation-team",
-    "note": "Add the canonical docs.typo3.org contribution guide URL when agreed by the team. Do not duplicate the guide here."
+    "note": "Canonical guide for how to propose and land documentation changes (fork, edit, pull request, review)."
+  },
+  {
+    "id": "how-to-document",
+    "name": "How to document (writing & style guide)",
+    "category": "onboarding",
+    "appliesTo": ["all documentation repositories"],
+    "status": "active",
+    "url": "https://docs.typo3.org/m/typo3/docs-how-to-document/main/en-us/",
+    "owner": "documentation-team",
+    "note": "Reference for reStructuredText, rendering, structure and writing conventions used across the manuals."
   },
   {
     "id": "repository-ownership",
@@ -15,7 +25,7 @@
     "category": "governance",
     "appliesTo": ["all active repositories"],
     "status": "recommended",
-    "url": null,
+    "url": "https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners",
     "owner": "documentation-team",
     "note": "Each active content repository should expose responsible reviewers or at least a domain contact. Prefer CODEOWNERS plus curated people mapping."
   },

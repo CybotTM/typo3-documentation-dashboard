@@ -12,6 +12,7 @@
       --muted: #687386;
       --line: #dbe1ea;
       --accent: #ff8700;
+      --link: #1849a9;
       --danger: #b42318;
       --warn: #b54708;
       --ok: #027a48;
@@ -20,37 +21,55 @@
     }
     * { box-sizing: border-box; }
     body { margin: 0; font: 14px/1.45 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: var(--bg); color: var(--ink); }
-    header { padding: 32px 40px 20px; background: linear-gradient(135deg, #161b2a, #263246); color: #fff; }
-    header h1 { margin: 0 0 8px; font-size: 30px; letter-spacing: -.03em; }
-    header p { max-width: 980px; margin: 0; color: #d5dbe6; }
-    main { padding: 28px 40px 56px; max-width: 1500px; margin: auto; }
+    a { color: var(--link); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    header { padding: 28px 40px 18px; background: linear-gradient(135deg, #161b2a, #263246); color: #fff; }
+    header h1 { margin: 0 0 8px; font-size: 27px; letter-spacing: -.03em; }
+    header p { max-width: 980px; margin: 0 0 14px; color: #d5dbe6; }
+    .resources { display: flex; flex-wrap: wrap; gap: 8px; }
+    .resources a { display: inline-flex; align-items: center; gap: 6px; padding: 6px 11px; border-radius: 999px; background: rgba(255,255,255,.12); color: #fff; font-size: 13px; font-weight: 500; }
+    .resources a:hover { background: rgba(255,255,255,.22); text-decoration: none; }
+    nav.tabs { position: sticky; top: 0; z-index: 10; display: flex; flex-wrap: wrap; gap: 4px; padding: 0 40px; background: #10151f; border-bottom: 1px solid #26303f; }
+    nav.tabs button { appearance: none; border: 0; background: transparent; color: #aeb7c6; font: inherit; font-weight: 600; padding: 13px 16px; cursor: pointer; border-bottom: 3px solid transparent; }
+    nav.tabs button:hover { color: #fff; }
+    nav.tabs button[aria-selected="true"] { color: #fff; border-bottom-color: var(--accent); }
+    nav.tabs .count { display: inline-block; margin-left: 6px; padding: 0 7px; border-radius: 999px; background: #26303f; color: #cfd6e2; font-size: 11px; font-weight: 700; }
+    main { padding: 24px 40px 56px; max-width: 1500px; margin: auto; }
+    [role="tabpanel"] { animation: fade .18s ease; }
+    [role="tabpanel"][hidden] { display: none; }
+    @keyframes fade { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
     .grid { display: grid; gap: 18px; }
     .cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
-    .cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
     .cols-2 { grid-template-columns: 1.4fr .9fr; }
-    .card { background: var(--panel); border: 1px solid var(--line); border-radius: 18px; box-shadow: var(--shadow); padding: 18px; }
-    .kpi { display: flex; flex-direction: column; gap: 4px; }
-    .kpi strong { font-size: 28px; letter-spacing: -.04em; }
-    .kpi span, .muted { color: var(--muted); }
-    h2 { margin: 0 0 14px; font-size: 20px; letter-spacing: -.02em; }
-    h3 { margin: 0 0 8px; font-size: 15px; }
+    .card { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; box-shadow: var(--shadow); padding: 18px; }
     section { margin-top: 20px; }
+    section:first-child { margin-top: 0; }
+    h2 { margin: 0 0 14px; font-size: 19px; letter-spacing: -.02em; }
+    h3 { margin: 0 0 8px; font-size: 15px; }
+    .lead { color: var(--muted); max-width: 900px; margin: -6px 0 16px; }
+    a.kpi { display: flex; flex-direction: column; gap: 4px; color: inherit; }
+    a.kpi:hover { text-decoration: none; border-color: var(--accent); }
+    a.kpi span { color: var(--muted); }
+    a.kpi strong { font-size: 27px; letter-spacing: -.04em; }
+    a.kpi .go { color: var(--link); font-size: 12px; font-weight: 600; }
     .toolbar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 14px; }
-    input, select { padding: 9px 11px; border: 1px solid var(--line); border-radius: 10px; background: #fff; min-width: 180px; }
+    .toolbar label { display: inline-flex; align-items: center; gap: 6px; color: var(--muted); font-size: 13px; user-select: none; }
+    input, select { padding: 9px 11px; border: 1px solid var(--line); border-radius: 10px; background: #fff; min-width: 170px; font: inherit; }
     table { width: 100%; border-collapse: collapse; }
     th, td { padding: 10px 8px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
     th { font-size: 12px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); }
-    a { color: #1849a9; text-decoration: none; }
-    a:hover { text-decoration: underline; }
+    tbody tr:hover { background: #fafbfe; }
     .pill { display: inline-flex; align-items: center; gap: 5px; padding: 3px 8px; border-radius: 999px; background: #eef2f6; color: #344054; font-size: 12px; white-space: nowrap; }
     .pill.ok { background: #ecfdf3; color: var(--ok); }
     .pill.warn { background: #fffaeb; color: var(--warn); }
     .pill.danger { background: #fef3f2; color: var(--danger); }
     .pill.unknown { background: #f2f4f7; color: var(--unknown); }
+    .pill.inferred { border: 1px dashed #b6bfce; background: transparent; color: var(--muted); }
+    a.pill:hover { text-decoration: none; filter: brightness(.97); }
+    .stack { display: flex; flex-wrap: wrap; gap: 5px; }
     .person { border: 1px solid var(--line); border-radius: 14px; padding: 14px; background: #fff; }
     .person strong { display: block; font-size: 15px; }
     .person .role { color: var(--muted); margin: 3px 0 8px; }
-    .tagline { display: flex; flex-wrap: wrap; gap: 6px; }
     .ask { margin-top: 9px; color: var(--muted); }
     #graph { width: 100%; min-height: 560px; border: 1px solid var(--line); border-radius: 16px; background: radial-gradient(circle at top left, #fff8f0, #fff 45%); overflow: hidden; }
     .node { cursor: pointer; }
@@ -59,22 +78,78 @@
     .legend { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
     .rule { border-left: 4px solid var(--accent); padding: 10px 12px; background: #fff9f2; border-radius: 10px; margin-bottom: 10px; }
     .small { font-size: 12px; color: var(--muted); }
-    .attention { display: grid; gap: 8px; }
-    .attention-item { display: flex; justify-content: space-between; gap: 12px; border: 1px solid var(--line); padding: 10px; border-radius: 12px; }
+    .attn-item { border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; margin-bottom: 10px; }
+    .attn-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+    .attn-badges { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+    .fix { margin-top: 8px; font-size: 12px; color: var(--muted); }
+    .guide { border: 1px solid var(--line); border-radius: 14px; padding: 16px 18px; margin-bottom: 14px; background: #fff; }
+    .guide h3 { display: flex; align-items: center; gap: 8px; }
+    .guide ol, .guide ul { margin: 8px 0 0; padding-left: 20px; }
+    .guide li { margin: 4px 0; }
+    code { background: #eef2f6; padding: 1px 5px; border-radius: 5px; font-size: 12.5px; }
     footer { margin-top: 28px; color: var(--muted); font-size: 12px; }
-    @media (max-width: 1100px) { .cols-4, .cols-3, .cols-2 { grid-template-columns: 1fr; } main, header { padding-left: 18px; padding-right: 18px; } }
+    @media (max-width: 1100px) { .cols-4, .cols-2 { grid-template-columns: 1fr; } main, header, nav.tabs { padding-left: 16px; padding-right: 16px; } }
   </style>
 </head>
 <body>
 <header>
   <h1>TYPO3 Documentation Repository Operations Map</h1>
-  <p>Generated overview of repositories, work queues, ownership signals, communication channels, rules and relationship topology for onboarding and maintainer operations.</p>
+  <p>Orientation for maintainers, new team members and contributors: which repository owns what, where work is queued, which repositories lack ownership signals, and who to ask. Generated GitHub facts are kept separate from human-curated responsibility data.</p>
+  <div class="resources" id="resources"></div>
 </header>
+<nav class="tabs" id="tabs" role="tablist" aria-label="Dashboard sections"></nav>
 <main>
-  <section class="grid cols-4" id="kpis"></section>
+  <section id="panel-overview" role="tabpanel" aria-labelledby="tab-overview">
+    <div class="grid cols-4" id="kpis"></div>
+    <section class="card">
+      <h2>What this dashboard is for</h2>
+      <p class="lead">Every count below is collected live from the GitHub API. Ownership, expertise and communication data is human-curated and never inferred from commit history. Where a fact is not known it is shown as <span class="pill unknown">unknown</span> or marked <span class="pill inferred">inferred</span> rather than guessed. Archived repositories are hidden by default across every tab.</p>
+      <div id="overviewStats" class="stack"></div>
+    </section>
+  </section>
 
-  <section class="grid cols-2">
-    <div class="card">
+  <section id="panel-repositories" role="tabpanel" aria-labelledby="tab-repositories" hidden>
+    <section class="card">
+      <h2>Repository dashboard</h2>
+      <div class="toolbar">
+        <input id="repoSearch" placeholder="Filter by name, purpose, category…">
+        <select id="categoryFilter"><option value="all">All categories</option></select>
+        <select id="lifecycleFilter"><option value="all">All lifecycles</option></select>
+        <label><input type="checkbox" id="needsOwner"> Only repos without a curated owner</label>
+        <label><input type="checkbox" id="showArchived"> Show archived</label>
+      </div>
+      <div style="overflow:auto">
+        <table id="repoTable">
+          <thead><tr><th>Repository</th><th>Purpose</th><th>Category / lifecycle</th><th>Work queue</th><th>Readiness</th><th>Who to ask</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <p class="small" id="repoCount"></p>
+    </section>
+  </section>
+
+  <section id="panel-people" role="tabpanel" aria-labelledby="tab-people" hidden>
+    <div class="grid cols-2">
+      <div class="card">
+        <h2>People, roles and expertise</h2>
+        <p class="small">Public roles from the TYPO3 Documentation Team page. Not a per-repository ownership map — for a repository-specific contact, see the “Who to ask” column.</p>
+        <div id="people" class="grid cols-2"></div>
+      </div>
+      <div>
+        <div class="card">
+          <h2>Communication channels</h2>
+          <div id="communication"></div>
+        </div>
+        <div class="card" style="margin-top:18px">
+          <h2>Rules and policy references</h2>
+          <div id="rules"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="panel-graph" role="tabpanel" aria-labelledby="tab-graph" hidden>
+    <section class="card">
       <h2>Repository / system relationship graph</h2>
       <div class="toolbar">
         <select id="graphFilter">
@@ -83,60 +158,45 @@
           <option value="people">People, rules and channels</option>
           <option value="externals">External systems</option>
         </select>
-        <span class="small">Click a node to inspect its known metadata.</span>
+        <span class="small">Click a node to inspect it. Archived repositories follow the “Show archived” setting on the Repositories tab.</span>
       </div>
       <svg id="graph" role="img" aria-label="Repository relationship graph"></svg>
       <div class="legend">
         <span class="pill">repo</span><span class="pill ok">person</span><span class="pill warn">rule/channel</span><span class="pill unknown">external</span>
       </div>
-    </div>
-    <aside class="card" id="inspector">
-      <h2>Inspector</h2>
-      <p class="muted">Select a graph node or repository row.</p>
-    </aside>
+      <div class="card" id="inspector" style="margin-top:16px">
+        <h3>Inspector</h3>
+        <p class="muted small">Select a graph node.</p>
+      </div>
+    </section>
   </section>
 
-  <section class="card">
-    <h2>Needs attention</h2>
-    <div id="attention" class="attention"></div>
+  <section id="panel-attention" role="tabpanel" aria-labelledby="tab-attention" hidden>
+    <section class="card">
+      <h2>Needs attention</h2>
+      <p class="lead">Repositories with ownership gaps, stale pull requests or missing contributor files, grouped per repository. Each item links to how to fix it on the <a href="#" data-goto="contribute">Contribute &amp; fix</a> tab.</p>
+      <div id="attention"></div>
+    </section>
   </section>
 
-  <section class="card">
-    <h2>Repository dashboard</h2>
-    <div class="toolbar">
-      <input id="repoSearch" placeholder="Filter repositories, purpose, category…">
-      <select id="categoryFilter"><option value="all">All categories</option></select>
-      <select id="lifecycleFilter"><option value="all">All lifecycles</option></select>
-    </div>
-    <div style="overflow:auto">
-      <table id="repoTable">
-        <thead><tr><th>Repository</th><th>Purpose</th><th>Lifecycle</th><th>Work queue</th><th>Readiness</th><th>Who to ask</th></tr></thead>
-        <tbody></tbody>
-      </table>
-    </div>
+  <section id="panel-contribute" role="tabpanel" aria-labelledby="tab-contribute" hidden>
+    <section class="card">
+      <h2>Contribute &amp; fix common gaps</h2>
+      <p class="lead">Concrete steps for the gaps this dashboard surfaces. Data lives in two places: <strong>generated</strong> GitHub facts refresh automatically; <strong>curated</strong> ownership data is edited by pull request in this repository.</p>
+      <div id="guides"></div>
+    </section>
   </section>
 
-  <section class="grid cols-2">
-    <div class="card">
-      <h2>People, roles and expertise</h2>
-      <div id="people" class="grid cols-2"></div>
-    </div>
-    <div class="card">
-      <h2>Communication channels</h2>
-      <div id="communication"></div>
-      <h2 style="margin-top:18px">Rules and policy references</h2>
-      <div id="rules"></div>
-    </div>
-  </section>
-
-  <section class="card">
-    <h2>Pipeline status and data provenance</h2>
-    <p id="provenance" class="muted"></p>
-    <p class="small">Curated human data lives under <code>data/curated/</code>. Generated GitHub data lives under <code>data/generated/</code>. Do not edit generated files manually unless explicitly creating a seed fallback.</p>
+  <section id="panel-provenance" role="tabpanel" aria-labelledby="tab-provenance" hidden>
+    <section class="card">
+      <h2>Data provenance</h2>
+      <p id="provenance" class="lead"></p>
+      <p class="small">Curated human data lives under <code>data/curated/</code>. Generated GitHub data lives under <code>data/generated/</code>. Generated files are overwritten by the nightly collector; do not hand-edit them except as seed fallback.</p>
+    </section>
   </section>
 
   <footer>
-    This dashboard intentionally distinguishes generated facts from curated responsibility data. Unknown maintainership is shown as unknown rather than guessed.
+    This dashboard distinguishes generated GitHub facts from curated responsibility data. Unknown maintainership is shown as unknown, and inferred classifications are marked, rather than guessed.
   </footer>
 </main>
 <script>
@@ -144,31 +204,60 @@ window.__DASHBOARD_DATA__ = __DASHBOARD_DATA_JSON__;
 </script>
 <script>
 const data = window.__DASHBOARD_DATA__;
+const ORG = data.settings.organization || 'TYPO3-Documentation';
 const byId = new Map(data.people.map(p => [p.id, p]));
-const repos = data.repositories;
+const allRepos = data.repositories;
 const q = (sel, root = document) => root.querySelector(sel);
 const qq = (sel, root = document) => [...root.querySelectorAll(sel)];
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const fmt = n => n === null || n === undefined ? 'n/a' : n;
 const ageDays = iso => iso ? Math.floor((Date.now() - Date.parse(iso)) / 86400000) : null;
-const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const pill = (label, cls = '') => `<span class="pill ${cls}">${esc(label)}</span>`;
+const linkPill = (label, href, cls = '') => `<a class="pill ${cls}" href="${esc(href)}" target="_blank" rel="noreferrer">${esc(label)}</a>`;
+const orgSearch = (query, type) => `https://github.com/search?q=${encodeURIComponent(`org:${ORG} ${query}`)}&type=${type}`;
+
+let showArchived = false;
+let needsOwnerOnly = false;
+const activeRepos = () => showArchived ? allRepos : allRepos.filter(r => !r.archived);
+const archivedCount = allRepos.filter(r => r.archived).length;
+
+function category(repo) {
+  if (repo.category) return { value: repo.category, inferred: false };
+  return { value: repo.derivedCategory || 'uncategorized', inferred: Boolean(repo.derivedCategory) };
+}
+function lifecycle(repo) {
+  if (repo.lifecycle) return { value: repo.lifecycle, inferred: false };
+  return { value: repo.derivedLifecycle || 'unknown', inferred: Boolean(repo.derivedLifecycle) && repo.derivedLifecycle !== 'unknown' };
+}
+function categoryPill(repo) {
+  const c = category(repo);
+  return `<span class="pill ${c.inferred ? 'inferred' : ''}">${esc(c.value)}${c.inferred ? ' · inferred' : ''}</span>`;
+}
+function lifecyclePill(repo) {
+  const l = lifecycle(repo);
+  const cls = l.value === 'archived' ? 'unknown' : l.inferred ? 'inferred' : '';
+  return `<span class="pill ${cls}">${esc(l.value)}${l.inferred ? ' · inferred' : ''}</span>`;
+}
 
 function readiness(repo) {
   const checks = [repo.hasReadme, repo.hasContributing, repo.hasCodeowners, repo.hasSecurity, repo.hasDependabot || repo.hasRenovate];
   const known = checks.filter(v => v !== null && v !== undefined);
-  if (!known.length) return { score: null, html: pill('unknown', 'unknown') };
+  if (!known.length) return pill('unknown', 'unknown');
   const passed = known.filter(Boolean).length;
   const cls = passed >= 4 ? 'ok' : passed >= 2 ? 'warn' : 'danger';
-  return { score: passed, html: pill(`${passed}/${known.length}`, cls) };
+  return pill(`${passed}/${known.length} files`, cls);
 }
 
 function workQueue(repo) {
-  const prs = repo.openPullRequests;
-  const issues = repo.openIssues;
-  const stale = repo.stalePullRequests;
+  const prs = repo.openPullRequests, issues = repo.openIssues, stale = repo.stalePullRequests;
   let cls = 'unknown';
   if ((stale ?? 0) > 0) cls = 'danger'; else if ((prs ?? 0) > 5 || (issues ?? 0) > 20) cls = 'warn'; else if (prs !== null || issues !== null) cls = 'ok';
-  return pill(`PR ${fmt(prs)} / Issues ${fmt(issues)} / Stale ${fmt(stale)}`, cls);
+  const base = `https://github.com/${repo.fullName}`;
+  return `<span class="stack">`
+    + linkPill(`PR ${fmt(prs)}`, `${base}/pulls`, cls)
+    + linkPill(`Issues ${fmt(issues)}`, `${base}/issues`, cls)
+    + linkPill(`Stale ${fmt(stale)}`, `${base}/pulls?q=${encodeURIComponent('is:pr is:open sort:updated-asc')}`, cls)
+    + `</span>`;
 }
 
 function repoStatus(repo) {
@@ -180,99 +269,220 @@ function repoStatus(repo) {
   return pill(`active ${days}d`, 'ok');
 }
 
+function contactsHtml(repo) {
+  const ids = repo.domainContacts ?? [];
+  if (ids.length) {
+    return ids.map(id => {
+      const p = byId.get(id);
+      if (p && p.github) return `<a href="https://github.com/${esc(p.github)}" target="_blank" rel="noreferrer">${esc(p.name)}</a>`;
+      return esc(p?.name ?? id);
+    }).join(', ');
+  }
+  const owners = repo.codeownersOwners ?? [];
+  if (owners.length) {
+    return owners.map(o => o.startsWith('@') && !o.includes('/')
+      ? `<a href="https://github.com/${esc(o.slice(1))}" target="_blank" rel="noreferrer">${esc(o)}</a>`
+      : esc(o)).join(', ') + ' <span class="small">(CODEOWNERS)</span>';
+  }
+  return `<a href="https://typo3.org/community/teams/documentation" target="_blank" rel="noreferrer">Documentation Team</a> `
+    + `<span class="small">· <a href="https://typo3.org/community/meet/chat-slack" target="_blank" rel="noreferrer">#typo3-documentation</a></span>`;
+}
+
+function renderResources() {
+  const items = [];
+  for (const c of data.communication) if (c.url) items.push([c.name, c.url]);
+  for (const r of data.rules) if (r.url && r.owner === 'documentation-team') items.push([r.name, r.url]);
+  const seen = new Set();
+  q('#resources').innerHTML = items.filter(([, u]) => !seen.has(u) && seen.add(u))
+    .map(([label, href]) => `<a href="${esc(href)}" target="_blank" rel="noreferrer">${esc(label)}</a>`).join('');
+}
+
+const TABS = [
+  ['overview', 'Overview'],
+  ['repositories', 'Repositories', () => activeRepos().length],
+  ['attention', 'Needs attention', () => attentionGroups().length],
+  ['people', 'People &amp; channels'],
+  ['graph', 'Relationships'],
+  ['contribute', 'Contribute &amp; fix'],
+  ['provenance', 'Data provenance']
+];
+
+function renderTabs() {
+  q('#tabs').innerHTML = TABS.map(([id, label, count], i) => {
+    const c = count ? `<span class="count">${count()}</span>` : '';
+    return `<button role="tab" id="tab-${id}" aria-controls="panel-${id}" aria-selected="${i === 0}" data-tab="${id}">${label}${c}</button>`;
+  }).join('');
+  qq('#tabs button').forEach(btn => btn.addEventListener('click', () => selectTab(btn.dataset.tab)));
+  qq('[data-goto]').forEach(el => el.addEventListener('click', e => { e.preventDefault(); selectTab(el.dataset.goto); }));
+}
+
+function selectTab(id) {
+  qq('#tabs button').forEach(b => b.setAttribute('aria-selected', String(b.dataset.tab === id)));
+  TABS.forEach(([t]) => { q(`#panel-${t}`).hidden = t !== id; });
+  if (id === 'graph') renderGraph();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
 function renderKpis() {
-  const archived = repos.filter(r => r.archived).length;
-  const openPrs = repos.reduce((sum, r) => sum + (r.openPullRequests ?? 0), 0);
-  const openIssues = repos.reduce((sum, r) => sum + (r.openIssues ?? 0), 0);
-  const missingOwners = repos.filter(r => !(r.domainContacts ?? []).length).length;
-  q('#kpis').innerHTML = [
-    ['Repositories', repos.length, `${archived} archived`],
-    ['Open PRs', openPrs || 'n/a', 'Generated from GitHub search when collector ran'],
-    ['Open issues', openIssues || 'n/a', 'Generated from GitHub search when collector ran'],
-    ['Missing curated contacts', missingOwners, 'Needs manual ownership mapping']
-  ].map(([label, value, note]) => `<div class="card kpi"><span>${label}</span><strong>${value}</strong><span>${note}</span></div>`).join('');
-}
-
-function renderPeople() {
-  q('#people').innerHTML = data.people.map(person => `
-    <div class="person">
-      <strong>${esc(person.name)}</strong>
-      <div class="role">${esc(person.publicRole)}</div>
-      <div class="tagline">${person.expertise.map(x => pill(x, x === 'TBD' ? 'unknown' : 'ok')).join('')}</div>
-      <div class="ask"><b>Ask for:</b> ${esc(person.askFor.join(', '))}</div>
-    </div>
-  `).join('');
-}
-
-function renderCommunicationAndRules() {
-  q('#communication').innerHTML = data.communication.map(c => `<div class="rule"><h3>${esc(c.name)}</h3><div>${esc(c.purpose)}</div><div class="small">${esc(c.type)} · ${esc(c.audience)}</div></div>`).join('');
-  q('#rules').innerHTML = data.rules.map(r => `<div class="rule"><h3>${esc(r.name)} ${pill(r.status, r.status.includes('recommended') ? 'warn' : 'unknown')}</h3><div>${esc(r.note)}</div><div class="small">Applies to: ${esc(r.appliesTo.join(', '))}</div></div>`).join('');
+  const active = activeRepos();
+  const openPrs = active.reduce((s, r) => s + (r.openPullRequests ?? 0), 0);
+  const openIssues = active.reduce((s, r) => s + (r.openIssues ?? 0), 0);
+  const missingOwners = active.filter(r => !(r.domainContacts ?? []).length).length;
+  const cards = [
+    ['Active repositories', active.length, `${archivedCount} archived hidden`, `https://github.com/orgs/${ORG}/repositories`, 'View on GitHub'],
+    ['Open pull requests', openPrs, 'across active repos', orgSearch('is:pr is:open', 'pullrequests'), 'Search PRs'],
+    ['Open issues', openIssues, 'across active repos', orgSearch('is:issue is:open', 'issues'), 'Search issues'],
+    ['Without curated owner', missingOwners, 'need a domain contact', '#needs-owner', 'Show in table']
+  ];
+  q('#kpis').innerHTML = cards.map(([label, value, note, href, go]) =>
+    `<a class="card kpi" href="${esc(href)}" ${href.startsWith('#') ? '' : 'target="_blank" rel="noreferrer"'} data-kpi="${esc(href)}"><span>${esc(label)}</span><strong>${esc(value)}</strong><span>${esc(note)}</span><span class="go">${esc(go)} →</span></a>`
+  ).join('');
+  q('[data-kpi="#needs-owner"]').addEventListener('click', e => {
+    e.preventDefault();
+    needsOwnerOnly = true; q('#needsOwner').checked = true; renderRepoTable(); selectTab('repositories');
+  });
+  q('#overviewStats').innerHTML = [
+    pill(`${active.length} active`, 'ok'),
+    pill(`${archivedCount} archived`, 'unknown'),
+    pill(`${openPrs} open PRs`, 'warn'),
+    pill(`${openIssues} open issues`, 'warn'),
+    pill(`${active.filter(r => r.hasCodeowners === false).length} without CODEOWNERS`, 'warn'),
+    pill(`${active.filter(r => (r.stalePullRequests ?? 0) > 0).length} with stale PRs`, 'danger')
+  ].join(' ');
 }
 
 function fillFilters() {
-  const categories = [...new Set(repos.map(r => r.category || 'uncategorized'))].sort();
-  const lifecycles = [...new Set(repos.map(r => r.lifecycle || 'unknown'))].sort();
-  q('#categoryFilter').innerHTML += categories.map(c => `<option value="${esc(c)}">${esc(c)}</option>`).join('');
-  q('#lifecycleFilter').innerHTML += lifecycles.map(c => `<option value="${esc(c)}">${esc(c)}</option>`).join('');
+  const cats = [...new Set(allRepos.map(r => category(r).value))].sort();
+  const lifes = [...new Set(allRepos.map(r => lifecycle(r).value))].sort();
+  q('#categoryFilter').innerHTML = '<option value="all">All categories</option>' + cats.map(c => `<option value="${esc(c)}">${esc(c)}</option>`).join('');
+  q('#lifecycleFilter').innerHTML = '<option value="all">All lifecycles</option>' + lifes.map(c => `<option value="${esc(c)}">${esc(c)}</option>`).join('');
 }
 
 function renderRepoTable() {
   const search = q('#repoSearch').value.toLowerCase();
-  const category = q('#categoryFilter').value;
-  const lifecycle = q('#lifecycleFilter').value;
-  const visible = repos.filter(repo => {
-    const blob = [repo.name, repo.description, repo.purpose, repo.category, repo.lifecycle, ...(repo.audience ?? [])].join(' ').toLowerCase();
-    return (!search || blob.includes(search)) && (category === 'all' || (repo.category || 'uncategorized') === category) && (lifecycle === 'all' || (repo.lifecycle || 'unknown') === lifecycle);
+  const cat = q('#categoryFilter').value;
+  const life = q('#lifecycleFilter').value;
+  const visible = activeRepos().filter(repo => {
+    const blob = [repo.name, repo.description, repo.purpose, category(repo).value, ...(repo.topics ?? []), ...(repo.audience ?? [])].join(' ').toLowerCase();
+    const hasOwner = (repo.domainContacts ?? []).length > 0;
+    return (!search || blob.includes(search))
+      && (cat === 'all' || category(repo).value === cat)
+      && (life === 'all' || lifecycle(repo).value === life)
+      && (!needsOwnerOnly || !hasOwner);
   });
-  q('#repoTable tbody').innerHTML = visible.map(repo => {
-    const contacts = (repo.domainContacts ?? []).map(id => byId.get(id)?.name ?? id).join(', ') || 'TBD';
-    return `<tr data-repo="${esc(repo.name)}">
+  q('#repoTable tbody').innerHTML = visible.map(repo => `
+    <tr data-repo="${esc(repo.name)}">
       <td><a href="${esc(repo.url)}" target="_blank" rel="noreferrer">${esc(repo.name)}</a><br>${repoStatus(repo)}</td>
-      <td>${esc(repo.purpose || repo.description) || '<span class="muted">Purpose not curated yet.</span>'}<br><span class="small">${esc((repo.audience ?? []).join(', '))}</span></td>
-      <td>${pill(repo.category || 'uncategorized')} ${pill(repo.lifecycle || 'unknown', repo.lifecycle ? '' : 'unknown')}</td>
+      <td>${esc(repo.purpose || repo.description) || '<span class="small">Purpose not curated yet.</span>'}</td>
+      <td>${categoryPill(repo)} ${lifecyclePill(repo)}</td>
       <td>${workQueue(repo)}</td>
-      <td>${readiness(repo).html}</td>
-      <td>${esc(contacts)}</td>
-    </tr>`;
-  }).join('');
-  qq('#repoTable tbody tr').forEach(row => row.addEventListener('click', () => inspectRepo(repos.find(r => r.name === row.dataset.repo))));
+      <td>${readiness(repo)}</td>
+      <td>${contactsHtml(repo)}</td>
+    </tr>`).join('') || `<tr><td colspan="6" class="small">No repositories match the current filters.</td></tr>`;
+  q('#repoCount').textContent = `Showing ${visible.length} of ${activeRepos().length} ${showArchived ? '' : 'active '}repositories${showArchived ? '' : ` (${archivedCount} archived hidden)`}.`;
 }
+
+function renderPeople() {
+  q('#people').innerHTML = data.people.map(person => {
+    const name = person.github
+      ? `<a href="https://github.com/${esc(person.github)}" target="_blank" rel="noreferrer">${esc(person.name)}</a>`
+      : esc(person.name);
+    const gh = person.github ? ` <span class="small">@${esc(person.github)}</span>` : '';
+    return `<div class="person">
+      <strong>${name}${gh}</strong>
+      <div class="role">${esc(person.publicRole)}</div>
+      <div class="stack">${person.expertise.map(x => pill(x, x === 'TBD' ? 'unknown' : 'ok')).join('')}</div>
+      <div class="ask"><b>Ask for:</b> ${esc(person.askFor.join(', '))}</div>
+    </div>`;
+  }).join('');
+}
+
+function renderChannelsAndRules() {
+  q('#communication').innerHTML = data.communication.map(c => {
+    const title = c.url ? `<a href="${esc(c.url)}" target="_blank" rel="noreferrer">${esc(c.name)}</a>` : esc(c.name);
+    return `<div class="rule"><h3>${title} ${pill(c.type)}</h3><div>${esc(c.purpose)}</div><div class="small">${esc(c.audience)}</div></div>`;
+  }).join('');
+  q('#rules').innerHTML = data.rules.map(r => {
+    const title = r.url ? `<a href="${esc(r.url)}" target="_blank" rel="noreferrer">${esc(r.name)}</a>` : esc(r.name);
+    const statusCls = r.status === 'active' ? 'ok' : r.status.includes('recommended') ? 'warn' : 'unknown';
+    return `<div class="rule"><h3>${title} ${pill(r.status, statusCls)}</h3><div>${esc(r.note)}</div><div class="small">Applies to: ${esc(r.appliesTo.join(', '))}</div></div>`;
+  }).join('');
+}
+
+function attentionGroups() {
+  const groups = [];
+  for (const repo of activeRepos()) {
+    const items = [];
+    if (!(repo.domainContacts ?? []).length) items.push(['No curated owner / domain contact', 'danger', 'no-owner']);
+    if ((repo.stalePullRequests ?? 0) > 0) items.push([`${repo.stalePullRequests} stale open PR(s)`, 'danger', 'stale-pr']);
+    if (repo.hasCodeowners === false) items.push(['No CODEOWNERS file', 'warn', 'no-codeowners']);
+    if (repo.hasReadme === false) items.push(['No README detected', 'warn', 'no-readme']);
+    const days = ageDays(repo.lastPushedAt);
+    if (days !== null && days > 365) items.push([`No push for ${days} days`, 'warn', 'stale-activity']);
+    if (items.length) groups.push({ repo, items });
+  }
+  return groups.sort((a, b) => b.items.length - a.items.length);
+}
+
+const FIX_HINT = {
+  'no-owner': 'Add a contact under <a href="#" data-goto="contribute">Contribute &amp; fix → curated owner</a>.',
+  'stale-pr': 'Review or close the oldest pull requests.',
+  'no-codeowners': 'Add a CODEOWNERS file — see <a href="#" data-goto="contribute">Contribute &amp; fix</a>.',
+  'no-readme': 'Add a README describing purpose, audience and publishing.',
+  'stale-activity': 'Confirm whether this repository is still maintained or should be archived.'
+};
 
 function renderAttention() {
-  const items = [];
-  for (const repo of repos) {
-    if (!(repo.domainContacts ?? []).length) items.push([repo.name, 'No curated contact / ownership mapping', 'danger']);
-    if (repo.stalePullRequests > 0) items.push([repo.name, `${repo.stalePullRequests} stale open PR(s)`, 'danger']);
-    if (repo.hasCodeowners === false) items.push([repo.name, 'No CODEOWNERS file detected', 'warn']);
-    const days = ageDays(repo.lastPushedAt);
-    if (!repo.archived && days !== null && days > 365) items.push([repo.name, `No push for ${days} days`, 'warn']);
-  }
-  q('#attention').innerHTML = (items.slice(0, 20).map(([name, issue, cls]) => `<div class="attention-item"><b>${esc(name)}</b><span>${pill(issue, cls)}</span></div>`).join('')) || '<p class="muted">No attention items from available data.</p>';
+  const groups = attentionGroups();
+  q('#attention').innerHTML = groups.length ? groups.map(({ repo, items }) => {
+    const hints = [...new Set(items.map(([, , k]) => FIX_HINT[k]))].filter(Boolean);
+    return `<div class="attn-item">
+      <div class="attn-head">
+        <h3><a href="${esc(repo.url)}" target="_blank" rel="noreferrer">${esc(repo.name)}</a> ${categoryPill(repo)}</h3>
+        <span class="small">${repoStatus(repo)}</span>
+      </div>
+      <div class="attn-badges">${items.map(([label, cls]) => pill(label, cls)).join('')}</div>
+      <div class="fix">Fix: ${hints.join(' ')}</div>
+    </div>`;
+  }).join('') : '<p class="lead">No attention items across active repositories.</p>';
+  qq('#attention [data-goto]').forEach(el => el.addEventListener('click', e => { e.preventDefault(); selectTab(el.dataset.goto); }));
 }
 
-function inspectRepo(repo) {
-  if (!repo) return;
-  const contacts = (repo.domainContacts ?? []).map(id => byId.get(id)?.name ?? id).join(', ') || 'TBD';
-  q('#inspector').innerHTML = `<h2>${esc(repo.name)}</h2>
-    <p>${esc(repo.purpose || repo.description || 'No curated purpose yet.')}</p>
-    <p>${repoStatus(repo)} ${workQueue(repo)} ${readiness(repo).html}</p>
-    <h3>Contacts</h3><p>${esc(contacts)}</p>
-    <h3>External relations</h3><p>${esc((repo.externalRelations ?? []).join(', ')) || 'None curated yet.'}</p>
-    <h3>Detected files</h3><p>${[
-      ['README', repo.hasReadme], ['CONTRIBUTING', repo.hasContributing], ['CODEOWNERS', repo.hasCodeowners], ['SECURITY', repo.hasSecurity], ['dependency bot', repo.hasDependabot || repo.hasRenovate]
-    ].map(([k, v]) => pill(`${k}: ${fmt(v)}`, v === true ? 'ok' : v === false ? 'warn' : 'unknown')).join(' ')}</p>
-    <p><a href="${esc(repo.url)}" target="_blank" rel="noreferrer">Open repository</a></p>`;
+function renderGuides() {
+  const guides = [
+    ['Add a curated owner / domain contact', [
+      'Open <code>data/curated/people.json</code> and add the person (id, name, github, publicRole, expertise, askFor, source, confidence) if they are not listed.',
+      'Open <code>data/curated/repository-overrides.json</code> and set <code>domainContacts</code> to their id(s) for the repository.',
+      'Use the evidence order: team confirmation → CODEOWNERS → README/CONTRIBUTING → public team role page. Never infer ownership from commit frequency.',
+      'Open a pull request. The nightly build picks it up automatically.'
+    ]],
+    ['Add a CODEOWNERS file', [
+      'Create <code>CODEOWNERS</code> (or <code>.github/CODEOWNERS</code>) in the repository.',
+      'Map paths to GitHub users or teams, e.g. <code>* @TYPO3-Documentation/team-name</code>.',
+      'The collector reads CODEOWNERS and surfaces the owners in the “Who to ask” column.'
+    ]],
+    ['Resolve stale pull requests', [
+      'Open the repository’s pull request list (linked from the work-queue badges).',
+      'Review, merge or close pull requests older than the stale threshold (default 30 days).'
+    ]],
+    ['Contribute documentation changes', [
+      'Read the <a href="https://docs.typo3.org/m/typo3/guide-contributionworkflow/main/en-us/" target="_blank" rel="noreferrer">contribution workflow</a> and the <a href="https://docs.typo3.org/m/typo3/docs-how-to-document/main/en-us/" target="_blank" rel="noreferrer">how-to-document guide</a>.',
+      'Ask in <a href="https://typo3.org/community/meet/chat-slack" target="_blank" rel="noreferrer">#typo3-documentation</a> on TYPO3 Slack if you are unsure which repository to target.'
+    ]]
+  ];
+  q('#guides').innerHTML = guides.map(([title, steps]) =>
+    `<div class="guide"><h3>${esc(title)}</h3><ol>${steps.map(s => `<li>${s}</li>`).join('')}</ol></div>`
+  ).join('');
 }
 
 function buildGraphNodes(filter) {
   const nodes = new Map();
   const links = [];
   const add = (id, type, label = id) => { if (!nodes.has(id)) nodes.set(id, { id, type, label }); };
-  if (filter === 'all' || filter === 'repositories' || filter === 'externals') add('TYPO3-Documentation', 'org');
+  const repos = activeRepos();
+  if (filter === 'all' || filter === 'repositories' || filter === 'externals') add(ORG, 'org');
   for (const repo of repos) {
-    if (filter === 'all' || filter === 'repositories') {
-      add(repo.name, 'repo'); links.push(['TYPO3-Documentation', repo.name, 'contains']);
-    }
+    if (filter === 'all' || filter === 'repositories') { add(repo.name, 'repo'); links.push([ORG, repo.name, 'contains']); }
     for (const ext of repo.externalRelations ?? []) {
       if (filter === 'all' || filter === 'externals') { add(repo.name, 'repo'); add(ext, 'external'); links.push([repo.name, ext, 'relates']); }
     }
@@ -299,13 +509,13 @@ function renderGraph() {
   const center = { x: width / 2, y: height / 2 };
   nodes.forEach((n, i) => {
     const angle = (Math.PI * 2 * i) / nodes.length;
-    const radius = n.type === 'org' || n.type === 'team' ? 20 : Math.min(width, height) * .38;
+    const radius = n.type === 'org' || n.type === 'team' ? 20 : Math.min(width, height) * .40;
     n.x = center.x + Math.cos(angle) * radius;
     n.y = center.y + Math.sin(angle) * radius;
   });
   const nodeById = new Map(nodes.map(n => [n.id, n]));
   for (const l of links) {
-    const a = nodeById.get(l.source); const b = nodeById.get(l.target);
+    const a = nodeById.get(l.source), b = nodeById.get(l.target);
     const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
     line.setAttribute('class', 'link'); line.setAttribute('x1', a.x); line.setAttribute('y1', a.y); line.setAttribute('x2', b.x); line.setAttribute('y2', b.y);
     svg.appendChild(line);
@@ -319,22 +529,41 @@ function renderGraph() {
     const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
     text.setAttribute('x', 14); text.setAttribute('y', 4); text.textContent = n.label;
     group.append(circle, text);
-    group.addEventListener('click', () => {
-      const repo = repos.find(r => r.name === n.id);
-      if (repo) inspectRepo(repo); else q('#inspector').innerHTML = `<h2>${esc(n.label)}</h2><p>${pill(n.type)}</p><p class="muted">${esc(n.id)}</p>`;
-    });
+    group.addEventListener('click', () => inspectNode(n));
     svg.appendChild(group);
   }
 }
 
-function renderProvenance() {
-  q('#provenance').textContent = `Generated data source: ${data.settings.source || 'unknown'}; generated at: ${data.settings.generatedAt || 'not yet generated'}; repositories in current data set: ${repos.length}.`;
+function inspectNode(n) {
+  const repo = allRepos.find(r => r.name === n.id);
+  if (repo) {
+    q('#inspector').innerHTML = `<h3><a href="${esc(repo.url)}" target="_blank" rel="noreferrer">${esc(repo.name)}</a></h3>
+      <p>${esc(repo.purpose || repo.description || 'No curated purpose yet.')}</p>
+      <p>${repoStatus(repo)} ${categoryPill(repo)} ${lifecyclePill(repo)}</p>
+      <p>${workQueue(repo)}</p>
+      <h3>Who to ask</h3><p>${contactsHtml(repo)}</p>
+      <h3>External relations</h3><p>${esc((repo.externalRelations ?? []).join(', ')) || 'None curated yet.'}</p>`;
+  } else {
+    q('#inspector').innerHTML = `<h3>${esc(n.label)}</h3><p>${pill(n.type)}</p><p class="small">${esc(n.id)}</p>`;
+  }
 }
 
-renderKpis(); renderPeople(); renderCommunicationAndRules(); fillFilters(); renderRepoTable(); renderAttention(); renderGraph(); renderProvenance();
+function renderProvenance() {
+  q('#provenance').textContent = `Generated data source: ${data.settings.source || 'unknown'}; generated at: ${data.settings.generatedAt || 'not yet generated'}; repositories in current data set: ${allRepos.length} (${archivedCount} archived).`;
+}
+
+renderResources(); renderTabs(); renderKpis(); fillFilters(); renderRepoTable(); renderPeople();
+renderChannelsAndRules(); renderAttention(); renderGuides(); renderProvenance();
+
 for (const el of ['#repoSearch', '#categoryFilter', '#lifecycleFilter']) q(el).addEventListener('input', renderRepoTable);
+q('#needsOwner').addEventListener('change', e => { needsOwnerOnly = e.target.checked; renderRepoTable(); });
+q('#showArchived').addEventListener('change', e => {
+  showArchived = e.target.checked;
+  renderKpis(); renderRepoTable(); renderAttention(); renderTabs();
+  if (!q('#panel-graph').hidden) renderGraph();
+});
 q('#graphFilter').addEventListener('change', renderGraph);
-window.addEventListener('resize', renderGraph);
+window.addEventListener('resize', () => { if (!q('#panel-graph').hidden) renderGraph(); });
 </script>
 </body>
 </html>

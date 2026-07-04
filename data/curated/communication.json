@@ -1,12 +1,39 @@
 [
   {
+    "id": "docs-team-page",
+    "name": "TYPO3 Documentation Team page",
+    "type": "team-page",
+    "audience": "everyone",
+    "purpose": "Official page of the TYPO3 Documentation Team: members, mission and how to join.",
+    "url": "https://typo3.org/community/teams/documentation",
+    "confidence": "public-team-page"
+  },
+  {
+    "id": "docs-site",
+    "name": "docs.typo3.org",
+    "type": "documentation-site",
+    "audience": "readers and contributors",
+    "purpose": "Rendered, published TYPO3 documentation. The reader-facing output of these repositories.",
+    "url": "https://docs.typo3.org",
+    "confidence": "known-platform"
+  },
+  {
     "id": "slack-typo3-documentation",
     "name": "TYPO3 Slack #typo3-documentation",
     "type": "chat",
     "audience": "contributors and maintainers",
-    "purpose": "Main public coordination channel for documentation questions and onboarding.",
-    "url": "https://typo3.slack.com/archives/typo3-documentation",
+    "purpose": "Main public coordination channel for documentation questions and onboarding. Join TYPO3 Slack, then open #typo3-documentation.",
+    "url": "https://typo3.org/community/meet/chat-slack",
     "confidence": "public-team-page"
+  },
+  {
+    "id": "talk-typo3-forum",
+    "name": "talk.typo3.org",
+    "type": "forum",
+    "audience": "community",
+    "purpose": "Community discussion forum for longer-form questions and announcements.",
+    "url": "https://talk.typo3.org",
+    "confidence": "known-platform"
   },
   {
     "id": "github-issues",
@@ -14,7 +41,7 @@
     "type": "async-work",
     "audience": "repo maintainers and contributors",
     "purpose": "Repository-specific bugs, content changes, broken examples and implementation discussions.",
-    "url": "https://github.com/TYPO3-Documentation",
+    "url": "https://github.com/orgs/TYPO3-Documentation/repositories",
     "confidence": "inferred-standard-github-workflow"
   },
   {
@@ -23,7 +50,7 @@
     "type": "review",
     "audience": "contributors and reviewers",
     "purpose": "Concrete documentation changes, review discussions and merge readiness.",
-    "url": "https://github.com/TYPO3-Documentation",
+    "url": "https://github.com/pulls?q=is%3Apr+is%3Aopen+org%3ATYPO3-Documentation",
     "confidence": "inferred-standard-github-workflow"
   }
 ]

@@ -185,15 +185,24 @@ Do not add curated fields there. Add human-maintained fields to `data/curated/re
 
 If the GitHub API returns `null` for settings/branch protection, preserve `null`. It means unknown or not accessible, not disabled.
 
+Generated repository entries also include:
+
+- `codeownersOwners`: owner handles parsed from a CODEOWNERS file (repository-owned evidence, empty when absent).
+- `derivedCategory`: category inferred from repository name/topics. The dashboard uses a curated `category` when present and marks a derived one as `inferred`.
+- `derivedLifecycle`: `archived` when the repository is archived, otherwise an activity-based guess (`active`/`dormant`/`stale`/`unknown`), also marked `inferred` in the UI.
+
+These are generated, not curated: never treat `derived*` as confirmed classification, and never hand-edit them.
+
 ## GitHub API collection rules
 
 The collector must be safe to run with limited permissions.
 
 - 404/403 on optional settings endpoints should become `null`, not a hard failure.
+- Transient 5xx and secondary-rate-limit (Retry-After) responses are retried with backoff; only public repositories are collected (`type=public`).
 - Repository listing failures should fail the command.
-- Search API counts should be treated as operational indicators, not audit-grade numbers.
+- Open issue/PR counts and stale-PR counts come from one GraphQL sweep (accurate for all repos within the point budget), replacing the REST Search API whose 30/minute limit silently nulled most counts.
 - Keep API calls simple and transparent. Do not add heavy dependencies without a clear reason.
-- Prefer GitHub REST API unless GraphQL materially reduces complexity.
+- Prefer GitHub REST API unless GraphQL materially reduces complexity (counts are the justified GraphQL case).
 
 ## Dashboard rendering rules
 
