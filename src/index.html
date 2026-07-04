@@ -285,7 +285,7 @@ function contactsHtml(repo) {
       : esc(o)).join(', ') + ' <span class="small">(CODEOWNERS)</span>';
   }
   return `<a href="https://typo3.org/community/teams/documentation" target="_blank" rel="noreferrer">Documentation Team</a> `
-    + `<span class="small">· <a href="https://typo3.org/community/meet/chat-slack" target="_blank" rel="noreferrer">#typo3-documentation</a></span>`;
+    + `<span class="small">· <a href="https://typo3.slack.com/archives/typo3-documentation" target="_blank" rel="noreferrer">#typo3-documentation</a></span>`;
 }
 
 function renderResources() {
@@ -467,7 +467,7 @@ function renderGuides() {
     ]],
     ['Contribute documentation changes', [
       'Read the <a href="https://docs.typo3.org/m/typo3/guide-contributionworkflow/main/en-us/" target="_blank" rel="noreferrer">contribution workflow</a> and the <a href="https://docs.typo3.org/m/typo3/docs-how-to-document/main/en-us/" target="_blank" rel="noreferrer">how-to-document guide</a>.',
-      'Ask in <a href="https://typo3.org/community/meet/chat-slack" target="_blank" rel="noreferrer">#typo3-documentation</a> on TYPO3 Slack if you are unsure which repository to target.'
+      'Ask in <a href="https://typo3.slack.com/archives/typo3-documentation" target="_blank" rel="noreferrer">#typo3-documentation</a> on TYPO3 Slack (<a href="https://typo3.org/community/meet/chat-slack" target="_blank" rel="noreferrer">join here</a> first) if you are unsure which repository to target.'
     ]]
   ];
   q('#guides').innerHTML = guides.map(([title, steps]) =>

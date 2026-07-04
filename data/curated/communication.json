@@ -22,7 +22,16 @@
     "name": "TYPO3 Slack #typo3-documentation",
     "type": "chat",
     "audience": "contributors and maintainers",
-    "purpose": "Main public coordination channel for documentation questions and onboarding. Join TYPO3 Slack, then open #typo3-documentation.",
+    "purpose": "Main public coordination channel for documentation questions and onboarding. Opens the channel in TYPO3 Slack (sign in first; use \"Join TYPO3 Slack\" if you are not a member yet).",
+    "url": "https://typo3.slack.com/archives/typo3-documentation",
+    "confidence": "public-team-page"
+  },
+  {
+    "id": "slack-join",
+    "name": "Join TYPO3 Slack",
+    "type": "onboarding",
+    "audience": "newcomers",
+    "purpose": "Public invitation page to join the TYPO3 Slack workspace before opening #typo3-documentation.",
     "url": "https://typo3.org/community/meet/chat-slack",
     "confidence": "public-team-page"
   },
