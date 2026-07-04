@@ -13,7 +13,8 @@ const data = {
   communication: await json('data/curated/communication.json'),
   rules: await json('data/curated/rules.json'),
   relations: await json('data/curated/relations.json'),
-  repositoryOverrides: await json('data/curated/repository-overrides.json')
+  repositoryOverrides: await json('data/curated/repository-overrides.json'),
+  pipeline: await json('data/curated/pipeline.json')
 };
 
 const overridesByName = new Map(data.repositoryOverrides.map((entry) => [entry.name, entry]));

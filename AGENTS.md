@@ -35,6 +35,7 @@ Do not merge those two concepts. GitHub activity is not proof of responsibility.
 | `data/curated/rules.json` | Governance, contribution and lifecycle rules/references | curated; update by PR with owner/status |
 | `data/curated/relations.json` | Graph edges between repos, people, rules, channels and external systems | curated; update by PR with confidence |
 | `data/curated/repository-overrides.json` | Repository purpose, lifecycle, audience and domain contacts | curated; update by PR with evidence |
+| `data/curated/pipeline.json` | Shape of the documentation publishing pipeline (render/deploy/index tool repos, docs/search/api services, TYPO3 Core → phpDocumentor → api.typo3.org, service/tool contacts) — drives the "Trace the impact" tab | curated; update by PR |
 | `.github/workflows/update-dashboard.yml` | Scheduled dashboard refresh and GitHub Pages publish | manual code changes |
 
 ## Commands
@@ -187,6 +188,7 @@ If the GitHub API returns `null` for settings/branch protection, preserve `null`
 
 Generated repository entries also include:
 
+- `homepage`: the repository's GitHub homepage field — for content repositories this is the repo-declared docs.typo3.org manual URL (empty for tooling). The "Trace the impact" tab treats a repository as content that publishes a manual when its homepage points at docs.typo3.org.
 - `codeownersOwners`: owner handles parsed from a CODEOWNERS file (repository-owned evidence, empty when absent).
 - `derivedCategory`: category inferred from repository name/topics. The dashboard uses a curated `category` when present and marks a derived one as `inferred`.
 - `derivedLifecycle`: `archived` when the repository is archived, otherwise an activity-based guess (`active`/`dormant`/`stale`/`unknown`), also marked `inferred` in the UI.

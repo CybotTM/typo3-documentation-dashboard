@@ -1,0 +1,23 @@
+{
+  "docsService": "docs.typo3.org",
+  "searchService": "docs.typo3.org search",
+  "renderTool": "render-guides",
+  "deployTool": "t3docs-ci-deploy",
+  "indexTool": "t3docs-search-indexer",
+  "apiPipeline": {
+    "source": "TYPO3 Core",
+    "tool": "phpDocumentor",
+    "service": "api.typo3.org"
+  },
+  "serviceContacts": {
+    "docs.typo3.org": ["lina-wolf"],
+    "docs.typo3.org search": ["jaap-van-otterdijk"],
+    "api.typo3.org": ["jaap-van-otterdijk"]
+  },
+  "toolContacts": {
+    "render-guides": ["jaap-van-otterdijk"],
+    "t3docs-ci-deploy": ["jaap-van-otterdijk"],
+    "t3docs-search-indexer": ["jaap-van-otterdijk"]
+  },
+  "note": "Curated shape of the documentation publishing pipeline. Content repositories (those whose GitHub homepage points at docs.typo3.org) render through renderTool/deployTool to their manual and are indexed by indexTool into searchService. api.typo3.org is a separate pipeline generated from apiPipeline.source by apiPipeline.tool."
+}

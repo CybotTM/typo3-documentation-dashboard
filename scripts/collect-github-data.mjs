@@ -227,6 +227,7 @@ for (const repo of repos) {
     name: repo.name,
     fullName,
     url: repo.html_url,
+    homepage: repo.homepage || null,
     description: repo.description,
     defaultBranch: repo.default_branch,
     archived: repo.archived,

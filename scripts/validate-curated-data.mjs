@@ -8,6 +8,7 @@ const files = [
   'data/curated/rules.json',
   'data/curated/relations.json',
   'data/curated/repository-overrides.json',
+  'data/curated/pipeline.json',
   'data/generated/repositories.json'
 ];
 
@@ -58,6 +59,21 @@ const relations = data.get('data/curated/relations.json') ?? [];
 for (const relation of relations) {
   if (!relation.from || !relation.to || !relation.type) {
     fail(`Relation requires from/to/type: ${JSON.stringify(relation)}`);
+  }
+}
+
+const pipeline = data.get('data/curated/pipeline.json') ?? {};
+for (const key of ['docsService', 'searchService', 'renderTool', 'deployTool', 'indexTool', 'apiPipeline']) {
+  if (!pipeline[key]) fail(`pipeline.json requires ${key}.`);
+}
+for (const key of ['source', 'tool', 'service']) {
+  if (!pipeline.apiPipeline?.[key]) fail(`pipeline.json apiPipeline requires ${key}.`);
+}
+for (const [group, map] of [['serviceContacts', pipeline.serviceContacts], ['toolContacts', pipeline.toolContacts]]) {
+  for (const ids of Object.values(map ?? {})) {
+    for (const id of ids) {
+      if (!personIds.has(id)) fail(`pipeline.json ${group} references unknown person id: ${id}`);
+    }
   }
 }
 

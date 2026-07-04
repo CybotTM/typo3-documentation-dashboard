@@ -17,6 +17,8 @@
       --warn: #b54708;
       --ok: #027a48;
       --unknown: #667085;
+      --imp-up: #0e9384;
+      --imp-down: #d1620a;
       --shadow: 0 12px 34px rgba(16, 24, 40, .08);
     }
     * { box-sizing: border-box; }
@@ -78,6 +80,32 @@
     .legend { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
     .rule { border-left: 4px solid var(--accent); padding: 10px 12px; background: #fff9f2; border-radius: 10px; margin-bottom: 10px; }
     .small { font-size: 12px; color: var(--muted); }
+    button.ghost { appearance: none; font: inherit; font-size: 13px; padding: 8px 12px; border-radius: 999px; border: 1px solid var(--line); background: #fff; color: var(--ink); cursor: pointer; }
+    button.ghost.active { border-color: var(--accent); color: var(--accent); font-weight: 650; }
+    .legend-imp { display: inline-flex; align-items: center; gap: 6px; }
+    .legend-imp .dot { width: 9px; height: 9px; border-radius: 3px; display: inline-block; }
+    .impact-grid { display: grid; grid-template-columns: 1.7fr 1fr; gap: 16px; align-items: start; }
+    #impactSvg { width: 100%; height: auto; border: 1px solid var(--line); border-radius: 14px; background: radial-gradient(circle at top left, #fff8f0, #fff 45%); }
+    .imp-label { font-size: 10.5px; font-weight: 600; fill: var(--ink); }
+    .imp-sub { font-size: 9px; fill: var(--muted); }
+    .imp-col { font-size: 10.5px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; fill: var(--muted); }
+    .imp-node { cursor: pointer; }
+    .imp-node.dim { opacity: .16; }
+    .imp-edge { fill: none; stroke: var(--line); stroke-width: 1.4; }
+    .imp-edge.up { stroke: var(--imp-up); stroke-width: 2.4; }
+    .imp-edge.down { stroke: var(--imp-down); stroke-width: 2.4; }
+    .readout .r-eye { font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+    .readout h3 { margin: 6px 0 8px; font-size: 16px; word-break: break-word; }
+    .readout p { margin: 0 0 12px; font-size: 13px; color: var(--muted); }
+    .flowline { display: flex; align-items: center; flex-wrap: wrap; gap: 6px; font-size: 12px; margin-bottom: 12px; }
+    .flowline .step { padding: 3px 9px; border-radius: 999px; border: 1px solid var(--line); background: #fbfcfe; white-space: nowrap; }
+    .flowline .arr { color: var(--muted); }
+    .who { border-top: 1px dashed var(--line); padding-top: 12px; }
+    .who .who-label { font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); display: block; margin-bottom: 7px; }
+    .contact { display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px; margin: 0 6px 6px 0; border-radius: 999px; border: 1px solid var(--ok); color: var(--ok); font-size: 12.5px; font-weight: 600; text-decoration: none; background: #ecfdf3; }
+    .contact:hover { text-decoration: none; filter: brightness(.97); }
+    .who .note { font-size: 12px; color: var(--muted); margin-top: 4px; }
+    @media (max-width: 900px) { .impact-grid { grid-template-columns: 1fr; } }
     .attn-item { border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; margin-bottom: 10px; }
     .attn-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; }
     .attn-badges { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
@@ -150,23 +178,17 @@
 
   <section id="panel-graph" role="tabpanel" aria-labelledby="tab-graph" hidden>
     <section class="card">
-      <h2>Repository / system relationship graph</h2>
+      <h2>Trace the impact</h2>
+      <p class="lead">Select a repository, page, tool or service. What <span style="color:var(--imp-up)">produces it</span> is traced upstream; what <span style="color:var(--imp-down)">it triggers</span> is traced downstream. People are shown as contacts, not wired into the graph.</p>
       <div class="toolbar">
-        <select id="graphFilter">
-          <option value="all">All nodes</option>
-          <option value="repositories">Repositories only</option>
-          <option value="people">People, rules and channels</option>
-          <option value="externals">External systems</option>
-        </select>
-        <span class="small">Click a node to inspect it. Archived repositories follow the “Show archived” setting on the Repositories tab.</span>
+        <button type="button" class="ghost" id="vpVisitor">I'm a visitor</button>
+        <button type="button" class="ghost" id="vpContrib">I'm a contributor</button>
+        <label>or pick <select id="impactPick"></select></label>
+        <span class="small legend-imp"><span class="dot" style="background:var(--imp-up)"></span> produces it <span class="dot" style="background:var(--imp-down);margin-left:8px"></span> it triggers</span>
       </div>
-      <svg id="graph" role="img" aria-label="Repository relationship graph"></svg>
-      <div class="legend">
-        <span class="pill">repo</span><span class="pill ok">person</span><span class="pill warn">rule/channel</span><span class="pill unknown">external</span>
-      </div>
-      <div class="card" id="inspector" style="margin-top:16px">
-        <h3>Inspector</h3>
-        <p class="muted small">Select a graph node.</p>
+      <div class="impact-grid">
+        <svg id="impactSvg" viewBox="0 0 720 460" role="img" aria-label="Impact trace diagram"></svg>
+        <div class="readout card" id="readout"></div>
       </div>
     </section>
   </section>
@@ -302,7 +324,7 @@ const TABS = [
   ['repositories', 'Repositories', () => activeRepos().length],
   ['attention', 'Needs attention', () => attentionGroups().length],
   ['people', 'People &amp; channels'],
-  ['graph', 'Relationships'],
+  ['graph', 'Trace the impact'],
   ['contribute', 'Contribute &amp; fix'],
   ['provenance', 'Data provenance']
 ];
@@ -319,7 +341,7 @@ function renderTabs() {
 function selectTab(id) {
   qq('#tabs button').forEach(b => b.setAttribute('aria-selected', String(b.dataset.tab === id)));
   TABS.forEach(([t]) => { q(`#panel-${t}`).hidden = t !== id; });
-  if (id === 'graph') renderGraph();
+  if (id === 'graph') renderImpact(curImpact);
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
@@ -475,77 +497,132 @@ function renderGuides() {
   ).join('');
 }
 
-function buildGraphNodes(filter) {
-  const nodes = new Map();
-  const links = [];
-  const add = (id, type, label = id) => { if (!nodes.has(id)) nodes.set(id, { id, type, label }); };
-  const repos = activeRepos();
-  if (filter === 'all' || filter === 'repositories' || filter === 'externals') add(ORG, 'org');
-  for (const repo of repos) {
-    if (filter === 'all' || filter === 'repositories') { add(repo.name, 'repo'); links.push([ORG, repo.name, 'contains']); }
-    for (const ext of repo.externalRelations ?? []) {
-      if (filter === 'all' || filter === 'externals') { add(repo.name, 'repo'); add(ext, 'external'); links.push([repo.name, ext, 'relates']); }
-    }
+// ---- Trace the impact ----
+const PIPE = data.pipeline;
+const repoByName = new Map(allRepos.map(r => [r.name, r]));
+const RENDER = 't:' + PIPE.renderTool, DEPLOY = 't:' + PIPE.deployTool, INDEXER = 't:' + PIPE.indexTool;
+const PHPDOC = 't:' + PIPE.apiPipeline.tool, CORE = 'x:' + PIPE.apiPipeline.source;
+const SEARCH = 's:' + PIPE.searchService, API = 's:' + PIPE.apiPipeline.service;
+const svgns = 'http://www.w3.org/2000/svg';
+const els = (n, at = {}) => { const e = document.createElementNS(svgns, n); for (const k in at) e.setAttribute(k, at[k]); return e; };
+const cleanName = n => n.replace(/^TYPO3CMS-/, '');
+const clip = (s, n) => s.length > n ? s.slice(0, n - 1) + '…' : s;
+const workSub = r => r ? `${fmt(r.openIssues)}i · ${fmt(r.openPullRequests)}pr` : null;
+const contentRepos = () => activeRepos().filter(r => (r.homepage || '').toLowerCase().includes('docs.typo3.org'));
+
+function inode(id) {
+  if (id.startsWith('r:')) { const r = repoByName.get(id.slice(2)); return { type: 'repo', label: cleanName(id.slice(2)), sub: workSub(r) }; }
+  if (id.startsWith('m:')) { return { type: 'manual', label: cleanName(id.slice(2)), sub: 'docs.typo3.org' }; }
+  if (id === RENDER || id === DEPLOY || id === INDEXER) { const r = repoByName.get(id.slice(2)); return { type: 'tool', label: id.slice(2), sub: workSub(r) }; }
+  if (id === PHPDOC) return { type: 'tool', label: PIPE.apiPipeline.tool };
+  if (id === CORE) return { type: 'source', label: PIPE.apiPipeline.source, sub: 'source' };
+  if (id === API) return { type: 'system', label: PIPE.apiPipeline.service };
+  if (id === SEARCH) return { type: 'output', label: PIPE.searchService };
+  return { type: 'output', label: id.replace(/^s:/, '') };
+}
+const impColor = t => ({ repo: '#334155', tool: '#7a5af8', system: '#0e9384', output: '#d1620a', manual: '#d1620a', source: '#8a8172' }[t] || '#667085');
+
+function impactContactIds(id) {
+  if (id.startsWith('r:') || id.startsWith('m:')) {
+    const name = id.slice(2), r = repoByName.get(name);
+    if ((r?.domainContacts ?? []).length) return r.domainContacts;
+    return PIPE.toolContacts?.[name] ?? [];
   }
-  for (const rel of data.relations) {
-    if (filter === 'all' || filter === 'externals' || filter === 'people') { add(rel.from, rel.from.includes('#') || rel.from.includes('GitHub') ? 'channel' : 'external'); add(rel.to, 'external'); links.push([rel.from, rel.to, rel.type]); }
-  }
-  if (filter === 'all' || filter === 'people') {
-    add('Documentation Team', 'team');
-    for (const p of data.people) { add(p.name, 'person'); links.push([p.name, 'Documentation Team', p.publicRole]); }
-    for (const c of data.communication) { add(c.name, 'channel'); links.push([c.name, 'Documentation Team', 'channel']); }
-    for (const r of data.rules) { add(r.name, 'rule'); links.push([r.name, 'Documentation Team', 'rule']); }
-  }
-  return { nodes: [...nodes.values()], links: links.filter(([a, b]) => nodes.has(a) && nodes.has(b)).map(([source, target, type]) => ({ source, target, type })) };
+  if (id.startsWith('t:')) return PIPE.toolContacts?.[id.slice(2)] ?? [];
+  if (id.startsWith('s:')) return PIPE.serviceContacts?.[id.slice(2)] ?? [];
+  return [];
+}
+function impactContactsHtml(id, prefix) {
+  const ids = impactContactIds(id);
+  const chips = ids.length
+    ? ids.map(pid => { const p = byId.get(pid); if (!p) return `<span class="contact">${esc(pid)}</span>`; return p.github
+        ? `<a class="contact" href="https://github.com/${esc(p.github)}" target="_blank" rel="noreferrer">${esc(p.name)}</a>`
+        : `<span class="contact">${esc(p.name)}</span>`; }).join('')
+    : `<a class="contact" href="https://typo3.org/community/teams/documentation" target="_blank" rel="noreferrer">Documentation Team</a>`;
+  const admin = data.people.find(p => (p.publicRole || '').toLowerCase().includes('github') && p.github);
+  const adminNote = admin ? `<div class="note">For access, org settings or private/security matters: <a class="contact" style="border-color:var(--muted);color:var(--muted);background:transparent" href="https://github.com/${esc(admin.github)}" target="_blank" rel="noreferrer">${esc(admin.name)} · GitHub admin</a></div>` : '';
+  return `<div class="who"><span class="who-label">Who to ask${prefix ? ' · ' + prefix : ''}</span>${chips}${adminNote}</div>`;
 }
 
-function renderGraph() {
-  const svg = q('#graph');
-  const width = svg.clientWidth || 1000;
-  const height = 560;
-  svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
-  svg.innerHTML = '';
-  const { nodes, links } = buildGraphNodes(q('#graphFilter').value);
-  const center = { x: width / 2, y: height / 2 };
-  nodes.forEach((n, i) => {
-    const angle = (Math.PI * 2 * i) / nodes.length;
-    const radius = n.type === 'org' || n.type === 'team' ? 20 : Math.min(width, height) * .40;
-    n.x = center.x + Math.cos(angle) * radius;
-    n.y = center.y + Math.sin(angle) * radius;
-  });
-  const nodeById = new Map(nodes.map(n => [n.id, n]));
-  for (const l of links) {
-    const a = nodeById.get(l.source), b = nodeById.get(l.target);
-    const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-    line.setAttribute('class', 'link'); line.setAttribute('x1', a.x); line.setAttribute('y1', a.y); line.setAttribute('x2', b.x); line.setAttribute('y2', b.y);
-    svg.appendChild(line);
-  }
-  const colors = { repo: '#ff8700', person: '#12b76a', rule: '#f79009', channel: '#7a5af8', external: '#667085', org: '#18202f', team: '#18202f' };
-  for (const n of nodes) {
-    const group = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-    group.setAttribute('class', 'node'); group.setAttribute('transform', `translate(${n.x},${n.y})`);
-    const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-    circle.setAttribute('r', n.type === 'org' || n.type === 'team' ? 18 : 10); circle.setAttribute('fill', colors[n.type] || '#999');
-    const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-    text.setAttribute('x', 14); text.setAttribute('y', 4); text.textContent = n.label;
-    group.append(circle, text);
-    group.addEventListener('click', () => inspectNode(n));
-    svg.appendChild(group);
-  }
-}
-
-function inspectNode(n) {
-  const repo = allRepos.find(r => r.name === n.id);
-  if (repo) {
-    q('#inspector').innerHTML = `<h3><a href="${esc(repo.url)}" target="_blank" rel="noreferrer">${esc(repo.name)}</a></h3>
-      <p>${esc(repo.purpose || repo.description || 'No curated purpose yet.')}</p>
-      <p>${repoStatus(repo)} ${categoryPill(repo)} ${lifecyclePill(repo)}</p>
-      <p>${workQueue(repo)}</p>
-      <h3>Who to ask</h3><p>${contactsHtml(repo)}</p>
-      <h3>External relations</h3><p>${esc((repo.externalRelations ?? []).join(', ')) || 'None curated yet.'}</p>`;
+function pipelineFor(sel) {
+  const type = inode(sel).type, ids = new Set(), E = [];
+  const addE = (a, b) => { E.push({ a, b }); ids.add(a); ids.add(b); };
+  const content = contentRepos();
+  let framing = 'down', eye = '', sentence = '', chain = [], contactNode = sel, prefix = '';
+  if (type === 'repo' || type === 'manual') {
+    const name = sel.slice(2), rl = cleanName(name);
+    addE('r:' + name, RENDER); addE('r:' + name, DEPLOY); addE(RENDER, 'm:' + name); addE(DEPLOY, 'm:' + name); addE('m:' + name, INDEXER); addE(INDEXER, SEARCH);
+    contactNode = 'r:' + name; chain = [rl, `${PIPE.renderTool} + deploy`, rl + ' page', 'search'];
+    if (type === 'repo') { framing = 'down'; eye = 'Forward · a contributor'; prefix = 'this repository';
+      sentence = `A pull request to <b>${esc(rl)}</b> is rendered by ${esc(PIPE.renderTool)} and deployed by ${esc(PIPE.deployTool)} to its manual on docs.typo3.org, then indexed into search.`; }
+    else { framing = 'up'; eye = 'Outside-in · a visitor'; prefix = 'this page';
+      sentence = `This page is produced from the <b>${esc(rl)}</b> repository, rendered by ${esc(PIPE.renderTool)} and deployed by ${esc(PIPE.deployTool)}.`; }
+  } else if (sel === API || sel === CORE || sel === PHPDOC) {
+    addE(CORE, PHPDOC); addE(PHPDOC, API);
+    framing = sel === API ? 'up' : 'down'; eye = sel === API ? 'Outside-in · a visitor' : 'Separate pipeline';
+    contactNode = API; prefix = 'the API reference'; chain = [PIPE.apiPipeline.source, PIPE.apiPipeline.tool, PIPE.apiPipeline.service];
+    sentence = `<b>${esc(PIPE.apiPipeline.service)}</b> is generated from <b>${esc(PIPE.apiPipeline.source)}</b> by ${esc(PIPE.apiPipeline.tool)} — a separate pipeline, so none of the documentation repositories feed it.`;
+  } else if (sel === RENDER || sel === DEPLOY) {
+    content.forEach(r => { addE('r:' + r.name, sel); addE(sel, 'm:' + r.name); });
+    framing = 'down'; eye = 'Shared tooling'; contactNode = sel; prefix = 'this tool'; chain = [`${content.length} repos`, inode(sel).label, `${content.length} manuals`];
+    sentence = `<b>${esc(inode(sel).label)}</b> is shared: every content change runs through it, so a change to the tool itself affects <b>all ${content.length} manuals</b>.`;
   } else {
-    q('#inspector').innerHTML = `<h3>${esc(n.label)}</h3><p>${pill(n.type)}</p><p class="small">${esc(n.id)}</p>`;
+    content.forEach(r => addE('m:' + r.name, INDEXER)); addE(INDEXER, SEARCH);
+    framing = 'up'; eye = 'Outside-in · a visitor'; contactNode = SEARCH; prefix = 'search'; chain = [`${content.length} manuals`, PIPE.indexTool, 'search'];
+    sentence = `<b>${esc(PIPE.searchService)}</b> is built by ${esc(PIPE.indexTool)} from all ${content.length} published manuals.`;
   }
+  return { ids, E, framing, eye, sentence, chain, contactNode, prefix };
+}
+
+let curImpact = null;
+function renderImpact(sel) {
+  const first = contentRepos()[0];
+  if (!sel) sel = first ? 'm:' + first.name : API;
+  curImpact = sel;
+  const P = pipelineFor(sel);
+  const svg = q('#impactSvg'); svg.innerHTML = '';
+  const colOf = id => { const t = inode(id).type; if (t === 'repo' || t === 'source') return 0; if (t === 'tool') return 1; return 2; };
+  const cols = [[], [], []];
+  [...P.ids].forEach(id => cols[colOf(id)].push(id));
+  const order = id => ({ [RENDER]: 0, [DEPLOY]: 1, [INDEXER]: 2, [PHPDOC]: 3 }[id] ?? 9);
+  cols[1].sort((a, b) => order(a) - order(b));
+  const W = 720, colX = [120, 388, 620];
+  const maxN = Math.max(cols[0].length, cols[1].length, cols[2].length, 1);
+  const H = Math.max(300, 60 + maxN * 30);
+  svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+  ['REPOSITORIES', 'BUILD & RENDER', 'PUBLIC PAGES'].forEach((t, i) => { const tx = els('text', { x: colX[i], y: 16, 'text-anchor': 'middle', class: 'imp-col' }); tx.textContent = t; svg.appendChild(tx); });
+  const pos = new Map();
+  cols.forEach((arr, ci) => { const gap = Math.min(34, (H - 70) / Math.max(arr.length, 1)); const top = (H + 24) / 2 - (arr.length - 1) * gap / 2; arr.forEach((id, k) => pos.set(id, { x: colX[ci], y: top + k * gap })); });
+  const eG = els('g'); svg.appendChild(eG);
+  P.E.forEach(e => { const a = pos.get(e.a), b = pos.get(e.b); if (!a || !b) return; const mx = (a.x + b.x) / 2;
+    eG.appendChild(els('path', { class: 'imp-edge ' + P.framing, d: `M ${a.x + 56} ${a.y} C ${mx} ${a.y}, ${mx} ${b.y}, ${b.x - 56} ${b.y}` })); });
+  for (const [id, p] of pos) { const n = inode(id); const isSel = id === sel;
+    const stroke = isSel ? 'var(--accent)' : (P.framing === 'up' ? 'var(--imp-up)' : 'var(--imp-down)');
+    const g = els('g', { class: 'imp-node' }); const w = 112, h = 23;
+    g.appendChild(els('rect', { x: p.x - w / 2, y: p.y - h / 2, width: w, height: h, rx: 7, fill: '#fff', stroke, 'stroke-width': isSel ? 2.6 : 1.5 }));
+    g.appendChild(els('rect', { x: p.x - w / 2, y: p.y - h / 2, width: 4, height: h, rx: 2, fill: impColor(n.type) }));
+    const l = els('text', { x: p.x - w / 2 + 9, y: n.sub ? p.y - 1.5 : p.y + 3.5, class: 'imp-label' }); l.textContent = clip(n.label, 17); g.appendChild(l);
+    if (n.sub) { const s = els('text', { x: p.x - w / 2 + 9, y: p.y + 8, class: 'imp-sub' }); s.textContent = n.sub; g.appendChild(s); }
+    g.addEventListener('click', () => renderImpact(id)); svg.appendChild(g); }
+  q('#readout').innerHTML =
+    `<div class="r-eye">${esc(P.eye)}</div><h3>${esc(inode(sel).label)}</h3><p>${P.sentence}</p>` +
+    `<div class="flowline">${P.chain.map((s, i) => `<span class="step">${esc(s)}</span>${i < P.chain.length - 1 ? `<span class="arr">${P.framing === 'up' ? '&larr;' : '&rarr;'}</span>` : ''}`).join('')}</div>` +
+    impactContactsHtml(P.contactNode, P.prefix);
+  const t = inode(sel).type;
+  q('#vpVisitor').classList.toggle('active', t === 'manual' || t === 'system' || (t === 'output'));
+  q('#vpContrib').classList.toggle('active', t === 'repo');
+  const pick = q('#impactPick'); if (pick) pick.value = sel;
+}
+
+function fillImpactPicker() {
+  const content = contentRepos();
+  const group = (label, items) => items.length ? `<optgroup label="${esc(label)}">${items.map(([v, t]) => `<option value="${esc(v)}">${esc(t)}</option>`).join('')}</optgroup>` : '';
+  q('#impactPick').innerHTML =
+    group('Repositories', content.map(r => ['r:' + r.name, cleanName(r.name)])) +
+    group('Public pages (manuals)', content.map(r => ['m:' + r.name, cleanName(r.name)])) +
+    group('Tooling', [[RENDER, PIPE.renderTool], [DEPLOY, PIPE.deployTool], [INDEXER, PIPE.indexTool], [PHPDOC, PIPE.apiPipeline.tool]]) +
+    group('Public services', [[SEARCH, PIPE.searchService], [API, PIPE.apiPipeline.service]]) +
+    group('Sources', [[CORE, PIPE.apiPipeline.source]]);
 }
 
 function renderProvenance() {
@@ -553,17 +630,17 @@ function renderProvenance() {
 }
 
 renderResources(); renderTabs(); renderKpis(); fillFilters(); renderRepoTable(); renderPeople();
-renderChannelsAndRules(); renderAttention(); renderGuides(); renderProvenance();
+renderChannelsAndRules(); renderAttention(); renderGuides(); fillImpactPicker(); renderImpact(); renderProvenance();
 
 for (const el of ['#repoSearch', '#categoryFilter', '#lifecycleFilter']) q(el).addEventListener('input', renderRepoTable);
 q('#needsOwner').addEventListener('change', e => { needsOwnerOnly = e.target.checked; renderRepoTable(); });
 q('#showArchived').addEventListener('change', e => {
   showArchived = e.target.checked;
-  renderKpis(); renderRepoTable(); renderAttention(); renderTabs();
-  if (!q('#panel-graph').hidden) renderGraph();
+  renderKpis(); renderRepoTable(); renderAttention(); renderTabs(); fillImpactPicker(); renderImpact(curImpact);
 });
-q('#graphFilter').addEventListener('change', renderGraph);
-window.addEventListener('resize', () => { if (!q('#panel-graph').hidden) renderGraph(); });
+q('#impactPick').addEventListener('change', e => renderImpact(e.target.value));
+q('#vpVisitor').addEventListener('click', () => { const r = contentRepos()[0]; renderImpact(r ? 'm:' + r.name : API); });
+q('#vpContrib').addEventListener('click', () => { const r = contentRepos()[0]; renderImpact(r ? 'r:' + r.name : RENDER); });
 </script>
 </body>
 </html>
