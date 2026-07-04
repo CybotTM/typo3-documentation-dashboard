@@ -181,6 +181,7 @@
       <h2>Trace the impact</h2>
       <p class="lead">Select a repository, page, tool or service. What <span style="color:var(--imp-up)">produces it</span> is traced upstream; what <span style="color:var(--imp-down)">it triggers</span> is traced downstream. People are shown as contacts, not wired into the graph.</p>
       <div class="toolbar">
+        <button type="button" class="ghost" id="vpAll">Show everything</button>
         <button type="button" class="ghost" id="vpVisitor">I'm a visitor</button>
         <button type="button" class="ghost" id="vpContrib">I'm a contributor</button>
         <label>or pick <select id="impactPick"></select></label>
@@ -502,7 +503,7 @@ const PIPE = data.pipeline;
 const repoByName = new Map(allRepos.map(r => [r.name, r]));
 const RENDER = 't:' + PIPE.renderTool, DEPLOY = 't:' + PIPE.deployTool, INDEXER = 't:' + PIPE.indexTool;
 const PHPDOC = 't:' + PIPE.apiPipeline.tool, CORE = 'x:' + PIPE.apiPipeline.source;
-const SEARCH = 's:' + PIPE.searchService, API = 's:' + PIPE.apiPipeline.service;
+const SEARCH = 's:' + PIPE.searchService, API = 's:' + PIPE.apiPipeline.service, DOCS = 's:' + PIPE.docsService;
 const svgns = 'http://www.w3.org/2000/svg';
 const els = (n, at = {}) => { const e = document.createElementNS(svgns, n); for (const k in at) e.setAttribute(k, at[k]); return e; };
 const cleanName = n => n.replace(/^TYPO3CMS-/, '');
@@ -549,7 +550,13 @@ function pipelineFor(sel) {
   const addE = (a, b) => { E.push({ a, b }); ids.add(a); ids.add(b); };
   const content = contentRepos();
   let framing = 'down', eye = '', sentence = '', chain = [], contactNode = sel, prefix = '';
-  if (type === 'repo' || type === 'manual') {
+  if (sel === '*') {
+    content.forEach(r => { addE('r:' + r.name, RENDER); addE('r:' + r.name, DEPLOY); addE('r:' + r.name, INDEXER); });
+    addE(RENDER, DOCS); addE(DEPLOY, DOCS); addE(INDEXER, SEARCH); addE(CORE, PHPDOC); addE(PHPDOC, API);
+    framing = 'all'; eye = 'The whole pipeline'; contactNode = DOCS; prefix = '';
+    chain = [`${content.length} repos`, `${PIPE.renderTool} + deploy`, PIPE.docsService];
+    sentence = `<b>${content.length} content repositories</b> are rendered by ${esc(PIPE.renderTool)} and deployed by ${esc(PIPE.deployTool)} to <b>${esc(PIPE.docsService)}</b>, and indexed into search. <b>${esc(PIPE.apiPipeline.service)}</b> is generated separately from ${esc(PIPE.apiPipeline.source)} by ${esc(PIPE.apiPipeline.tool)}. Click any node to trace just that path.`;
+  } else if (type === 'repo' || type === 'manual') {
     const name = sel.slice(2), rl = cleanName(name);
     addE('r:' + name, RENDER); addE('r:' + name, DEPLOY); addE(RENDER, 'm:' + name); addE(DEPLOY, 'm:' + name); addE('m:' + name, INDEXER); addE(INDEXER, SEARCH);
     contactNode = 'r:' + name; chain = [rl, `${PIPE.renderTool} + deploy`, rl + ' page', 'search'];
@@ -576,8 +583,7 @@ function pipelineFor(sel) {
 
 let curImpact = null;
 function renderImpact(sel) {
-  const first = contentRepos()[0];
-  if (!sel) sel = first ? 'm:' + first.name : API;
+  if (!sel) sel = '*';
   curImpact = sel;
   const P = pipelineFor(sel);
   const svg = q('#impactSvg'); svg.innerHTML = '';
@@ -595,21 +601,23 @@ function renderImpact(sel) {
   cols.forEach((arr, ci) => { const gap = Math.min(34, (H - 70) / Math.max(arr.length, 1)); const top = (H + 24) / 2 - (arr.length - 1) * gap / 2; arr.forEach((id, k) => pos.set(id, { x: colX[ci], y: top + k * gap })); });
   const eG = els('g'); svg.appendChild(eG);
   P.E.forEach(e => { const a = pos.get(e.a), b = pos.get(e.b); if (!a || !b) return; const mx = (a.x + b.x) / 2;
-    eG.appendChild(els('path', { class: 'imp-edge ' + P.framing, d: `M ${a.x + 56} ${a.y} C ${mx} ${a.y}, ${mx} ${b.y}, ${b.x - 56} ${b.y}` })); });
-  for (const [id, p] of pos) { const n = inode(id); const isSel = id === sel;
-    const stroke = isSel ? 'var(--accent)' : (P.framing === 'up' ? 'var(--imp-up)' : 'var(--imp-down)');
+    eG.appendChild(els('path', { class: 'imp-edge' + (P.framing === 'all' ? '' : ' ' + P.framing), d: `M ${a.x + 56} ${a.y} C ${mx} ${a.y}, ${mx} ${b.y}, ${b.x - 56} ${b.y}` })); });
+  for (const [id, p] of pos) { const n = inode(id); const isSel = id === sel && sel !== '*';
+    const stroke = isSel ? 'var(--accent)' : (P.framing === 'all' ? impColor(n.type) : (P.framing === 'up' ? 'var(--imp-up)' : 'var(--imp-down)'));
     const g = els('g', { class: 'imp-node' }); const w = 112, h = 23;
     g.appendChild(els('rect', { x: p.x - w / 2, y: p.y - h / 2, width: w, height: h, rx: 7, fill: '#fff', stroke, 'stroke-width': isSel ? 2.6 : 1.5 }));
     g.appendChild(els('rect', { x: p.x - w / 2, y: p.y - h / 2, width: 4, height: h, rx: 2, fill: impColor(n.type) }));
     const l = els('text', { x: p.x - w / 2 + 9, y: n.sub ? p.y - 1.5 : p.y + 3.5, class: 'imp-label' }); l.textContent = clip(n.label, 17); g.appendChild(l);
     if (n.sub) { const s = els('text', { x: p.x - w / 2 + 9, y: p.y + 8, class: 'imp-sub' }); s.textContent = n.sub; g.appendChild(s); }
     g.addEventListener('click', () => renderImpact(id)); svg.appendChild(g); }
+  const isAll = sel === '*';
   q('#readout').innerHTML =
-    `<div class="r-eye">${esc(P.eye)}</div><h3>${esc(inode(sel).label)}</h3><p>${P.sentence}</p>` +
+    `<div class="r-eye">${esc(P.eye)}</div><h3>${esc(isAll ? 'Everything' : inode(sel).label)}</h3><p>${P.sentence}</p>` +
     `<div class="flowline">${P.chain.map((s, i) => `<span class="step">${esc(s)}</span>${i < P.chain.length - 1 ? `<span class="arr">${P.framing === 'up' ? '&larr;' : '&rarr;'}</span>` : ''}`).join('')}</div>` +
     impactContactsHtml(P.contactNode, P.prefix);
-  const t = inode(sel).type;
-  q('#vpVisitor').classList.toggle('active', t === 'manual' || t === 'system' || (t === 'output'));
+  const t = isAll ? null : inode(sel).type;
+  q('#vpAll').classList.toggle('active', isAll);
+  q('#vpVisitor').classList.toggle('active', t === 'manual' || t === 'system' || t === 'output');
   q('#vpContrib').classList.toggle('active', t === 'repo');
   const pick = q('#impactPick'); if (pick) pick.value = sel;
 }
@@ -618,6 +626,7 @@ function fillImpactPicker() {
   const content = contentRepos();
   const group = (label, items) => items.length ? `<optgroup label="${esc(label)}">${items.map(([v, t]) => `<option value="${esc(v)}">${esc(t)}</option>`).join('')}</optgroup>` : '';
   q('#impactPick').innerHTML =
+    '<option value="*">— everything —</option>' +
     group('Repositories', content.map(r => ['r:' + r.name, cleanName(r.name)])) +
     group('Public pages (manuals)', content.map(r => ['m:' + r.name, cleanName(r.name)])) +
     group('Tooling', [[RENDER, PIPE.renderTool], [DEPLOY, PIPE.deployTool], [INDEXER, PIPE.indexTool], [PHPDOC, PIPE.apiPipeline.tool]]) +
@@ -638,6 +647,7 @@ q('#showArchived').addEventListener('change', e => {
   showArchived = e.target.checked;
   renderKpis(); renderRepoTable(); renderAttention(); renderTabs(); fillImpactPicker(); renderImpact(curImpact);
 });
+q('#vpAll').addEventListener('click', () => renderImpact('*'));
 q('#impactPick').addEventListener('change', e => renderImpact(e.target.value));
 q('#vpVisitor').addEventListener('click', () => { const r = contentRepos()[0]; renderImpact(r ? 'm:' + r.name : API); });
 q('#vpContrib').addEventListener('click', () => { const r = contentRepos()[0]; renderImpact(r ? 'r:' + r.name : RENDER); });
