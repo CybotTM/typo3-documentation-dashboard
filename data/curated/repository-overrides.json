@@ -1,0 +1,47 @@
+[
+  {
+    "name": "TYPO3CMS-Reference-CoreApi",
+    "category": "reference",
+    "purpose": "Core API reference manual for TYPO3 developers and extension authors.",
+    "audience": ["extension developers", "core contributors", "technical writers"],
+    "externalRelations": ["TYPO3 Core", "docs.typo3.org"],
+    "domainContacts": ["lina-wolf"],
+    "lifecycle": "active-content"
+  },
+  {
+    "name": "TYPO3CMS-Reference-Typoscript",
+    "category": "reference",
+    "purpose": "TypoScript reference documentation.",
+    "audience": ["integrators", "sitepackage developers", "technical writers"],
+    "externalRelations": ["docs.typo3.org"],
+    "domainContacts": ["lina-wolf"],
+    "lifecycle": "active-content"
+  },
+  {
+    "name": "TYPO3CMS-Reference-TSconfig",
+    "category": "reference",
+    "purpose": "Page TSconfig and User TSconfig reference documentation.",
+    "audience": ["integrators", "backend customizers", "technical writers"],
+    "externalRelations": ["docs.typo3.org"],
+    "domainContacts": ["lina-wolf"],
+    "lifecycle": "active-content"
+  },
+  {
+    "name": "TYPO3CMS-Tutorial-GettingStarted",
+    "category": "tutorial",
+    "purpose": "Entry-level tutorial for new TYPO3 users and contributors.",
+    "audience": ["new contributors", "site builders", "evaluators"],
+    "externalRelations": ["docs.typo3.org"],
+    "domainContacts": ["lina-wolf", "sarah-mccarthy"],
+    "lifecycle": "active-content"
+  },
+  {
+    "name": "render-guides",
+    "category": "tooling",
+    "purpose": "Documentation rendering tooling and local rendering guidance.",
+    "audience": ["documentation maintainers", "contributors", "tooling maintainers"],
+    "externalRelations": ["docs.typo3.org", "GitHub Actions"],
+    "domainContacts": ["jaap-van-otterdijk"],
+    "lifecycle": "active-tooling"
+  }
+]

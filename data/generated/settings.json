@@ -1,0 +1,5 @@
+{
+  "generatedAt": null,
+  "source": "seed",
+  "note": "Repository settings/rulesets require a token with sufficient organization/repository permissions. Run npm run collect in GitHub Actions."
+}

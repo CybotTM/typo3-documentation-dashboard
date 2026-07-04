@@ -1,0 +1,19 @@
+{
+  "name": "typo3-documentation-dashboard",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Generated operations map and dashboard for TYPO3-Documentation repositories.",
+  "type": "module",
+  "scripts": {
+    "collect": "node scripts/collect-github-data.mjs",
+    "validate": "node scripts/validate-curated-data.mjs",
+    "build": "node scripts/build-dashboard.mjs",
+    "all": "npm run validate && npm run collect && npm run build",
+    "build:offline": "npm run validate && node scripts/build-dashboard.mjs"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "license": "MIT",
+  "devDependencies": {}
+}

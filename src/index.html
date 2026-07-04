@@ -1,0 +1,340 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>TYPO3 Documentation Repository Operations Map</title>
+  <style>
+    :root {
+      --bg: #f6f7fb;
+      --panel: #ffffff;
+      --ink: #18202f;
+      --muted: #687386;
+      --line: #dbe1ea;
+      --accent: #ff8700;
+      --danger: #b42318;
+      --warn: #b54708;
+      --ok: #027a48;
+      --unknown: #667085;
+      --shadow: 0 12px 34px rgba(16, 24, 40, .08);
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; font: 14px/1.45 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: var(--bg); color: var(--ink); }
+    header { padding: 32px 40px 20px; background: linear-gradient(135deg, #161b2a, #263246); color: #fff; }
+    header h1 { margin: 0 0 8px; font-size: 30px; letter-spacing: -.03em; }
+    header p { max-width: 980px; margin: 0; color: #d5dbe6; }
+    main { padding: 28px 40px 56px; max-width: 1500px; margin: auto; }
+    .grid { display: grid; gap: 18px; }
+    .cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .cols-2 { grid-template-columns: 1.4fr .9fr; }
+    .card { background: var(--panel); border: 1px solid var(--line); border-radius: 18px; box-shadow: var(--shadow); padding: 18px; }
+    .kpi { display: flex; flex-direction: column; gap: 4px; }
+    .kpi strong { font-size: 28px; letter-spacing: -.04em; }
+    .kpi span, .muted { color: var(--muted); }
+    h2 { margin: 0 0 14px; font-size: 20px; letter-spacing: -.02em; }
+    h3 { margin: 0 0 8px; font-size: 15px; }
+    section { margin-top: 20px; }
+    .toolbar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 14px; }
+    input, select { padding: 9px 11px; border: 1px solid var(--line); border-radius: 10px; background: #fff; min-width: 180px; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: 10px 8px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+    th { font-size: 12px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); }
+    a { color: #1849a9; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .pill { display: inline-flex; align-items: center; gap: 5px; padding: 3px 8px; border-radius: 999px; background: #eef2f6; color: #344054; font-size: 12px; white-space: nowrap; }
+    .pill.ok { background: #ecfdf3; color: var(--ok); }
+    .pill.warn { background: #fffaeb; color: var(--warn); }
+    .pill.danger { background: #fef3f2; color: var(--danger); }
+    .pill.unknown { background: #f2f4f7; color: var(--unknown); }
+    .person { border: 1px solid var(--line); border-radius: 14px; padding: 14px; background: #fff; }
+    .person strong { display: block; font-size: 15px; }
+    .person .role { color: var(--muted); margin: 3px 0 8px; }
+    .tagline { display: flex; flex-wrap: wrap; gap: 6px; }
+    .ask { margin-top: 9px; color: var(--muted); }
+    #graph { width: 100%; min-height: 560px; border: 1px solid var(--line); border-radius: 16px; background: radial-gradient(circle at top left, #fff8f0, #fff 45%); overflow: hidden; }
+    .node { cursor: pointer; }
+    .node text { font-size: 11px; paint-order: stroke; stroke: white; stroke-width: 3px; stroke-linejoin: round; }
+    .link { stroke: #98a2b3; stroke-width: 1.3; opacity: .7; }
+    .legend { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+    .rule { border-left: 4px solid var(--accent); padding: 10px 12px; background: #fff9f2; border-radius: 10px; margin-bottom: 10px; }
+    .small { font-size: 12px; color: var(--muted); }
+    .attention { display: grid; gap: 8px; }
+    .attention-item { display: flex; justify-content: space-between; gap: 12px; border: 1px solid var(--line); padding: 10px; border-radius: 12px; }
+    footer { margin-top: 28px; color: var(--muted); font-size: 12px; }
+    @media (max-width: 1100px) { .cols-4, .cols-3, .cols-2 { grid-template-columns: 1fr; } main, header { padding-left: 18px; padding-right: 18px; } }
+  </style>
+</head>
+<body>
+<header>
+  <h1>TYPO3 Documentation Repository Operations Map</h1>
+  <p>Generated overview of repositories, work queues, ownership signals, communication channels, rules and relationship topology for onboarding and maintainer operations.</p>
+</header>
+<main>
+  <section class="grid cols-4" id="kpis"></section>
+
+  <section class="grid cols-2">
+    <div class="card">
+      <h2>Repository / system relationship graph</h2>
+      <div class="toolbar">
+        <select id="graphFilter">
+          <option value="all">All nodes</option>
+          <option value="repositories">Repositories only</option>
+          <option value="people">People, rules and channels</option>
+          <option value="externals">External systems</option>
+        </select>
+        <span class="small">Click a node to inspect its known metadata.</span>
+      </div>
+      <svg id="graph" role="img" aria-label="Repository relationship graph"></svg>
+      <div class="legend">
+        <span class="pill">repo</span><span class="pill ok">person</span><span class="pill warn">rule/channel</span><span class="pill unknown">external</span>
+      </div>
+    </div>
+    <aside class="card" id="inspector">
+      <h2>Inspector</h2>
+      <p class="muted">Select a graph node or repository row.</p>
+    </aside>
+  </section>
+
+  <section class="card">
+    <h2>Needs attention</h2>
+    <div id="attention" class="attention"></div>
+  </section>
+
+  <section class="card">
+    <h2>Repository dashboard</h2>
+    <div class="toolbar">
+      <input id="repoSearch" placeholder="Filter repositories, purpose, category…">
+      <select id="categoryFilter"><option value="all">All categories</option></select>
+      <select id="lifecycleFilter"><option value="all">All lifecycles</option></select>
+    </div>
+    <div style="overflow:auto">
+      <table id="repoTable">
+        <thead><tr><th>Repository</th><th>Purpose</th><th>Lifecycle</th><th>Work queue</th><th>Readiness</th><th>Who to ask</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="grid cols-2">
+    <div class="card">
+      <h2>People, roles and expertise</h2>
+      <div id="people" class="grid cols-2"></div>
+    </div>
+    <div class="card">
+      <h2>Communication channels</h2>
+      <div id="communication"></div>
+      <h2 style="margin-top:18px">Rules and policy references</h2>
+      <div id="rules"></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Pipeline status and data provenance</h2>
+    <p id="provenance" class="muted"></p>
+    <p class="small">Curated human data lives under <code>data/curated/</code>. Generated GitHub data lives under <code>data/generated/</code>. Do not edit generated files manually unless explicitly creating a seed fallback.</p>
+  </section>
+
+  <footer>
+    This dashboard intentionally distinguishes generated facts from curated responsibility data. Unknown maintainership is shown as unknown rather than guessed.
+  </footer>
+</main>
+<script>
+window.__DASHBOARD_DATA__ = __DASHBOARD_DATA_JSON__;
+</script>
+<script>
+const data = window.__DASHBOARD_DATA__;
+const byId = new Map(data.people.map(p => [p.id, p]));
+const repos = data.repositories;
+const q = (sel, root = document) => root.querySelector(sel);
+const qq = (sel, root = document) => [...root.querySelectorAll(sel)];
+const fmt = n => n === null || n === undefined ? 'n/a' : n;
+const ageDays = iso => iso ? Math.floor((Date.now() - Date.parse(iso)) / 86400000) : null;
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const pill = (label, cls = '') => `<span class="pill ${cls}">${esc(label)}</span>`;
+
+function readiness(repo) {
+  const checks = [repo.hasReadme, repo.hasContributing, repo.hasCodeowners, repo.hasSecurity, repo.hasDependabot || repo.hasRenovate];
+  const known = checks.filter(v => v !== null && v !== undefined);
+  if (!known.length) return { score: null, html: pill('unknown', 'unknown') };
+  const passed = known.filter(Boolean).length;
+  const cls = passed >= 4 ? 'ok' : passed >= 2 ? 'warn' : 'danger';
+  return { score: passed, html: pill(`${passed}/${known.length}`, cls) };
+}
+
+function workQueue(repo) {
+  const prs = repo.openPullRequests;
+  const issues = repo.openIssues;
+  const stale = repo.stalePullRequests;
+  let cls = 'unknown';
+  if ((stale ?? 0) > 0) cls = 'danger'; else if ((prs ?? 0) > 5 || (issues ?? 0) > 20) cls = 'warn'; else if (prs !== null || issues !== null) cls = 'ok';
+  return pill(`PR ${fmt(prs)} / Issues ${fmt(issues)} / Stale ${fmt(stale)}`, cls);
+}
+
+function repoStatus(repo) {
+  if (repo.archived) return pill('archived', 'unknown');
+  const days = ageDays(repo.lastPushedAt);
+  if (days === null) return pill('activity unknown', 'unknown');
+  if (days > 365) return pill(`stale ${days}d`, 'danger');
+  if (days > 120) return pill(`quiet ${days}d`, 'warn');
+  return pill(`active ${days}d`, 'ok');
+}
+
+function renderKpis() {
+  const archived = repos.filter(r => r.archived).length;
+  const openPrs = repos.reduce((sum, r) => sum + (r.openPullRequests ?? 0), 0);
+  const openIssues = repos.reduce((sum, r) => sum + (r.openIssues ?? 0), 0);
+  const missingOwners = repos.filter(r => !(r.domainContacts ?? []).length).length;
+  q('#kpis').innerHTML = [
+    ['Repositories', repos.length, `${archived} archived`],
+    ['Open PRs', openPrs || 'n/a', 'Generated from GitHub search when collector ran'],
+    ['Open issues', openIssues || 'n/a', 'Generated from GitHub search when collector ran'],
+    ['Missing curated contacts', missingOwners, 'Needs manual ownership mapping']
+  ].map(([label, value, note]) => `<div class="card kpi"><span>${label}</span><strong>${value}</strong><span>${note}</span></div>`).join('');
+}
+
+function renderPeople() {
+  q('#people').innerHTML = data.people.map(person => `
+    <div class="person">
+      <strong>${esc(person.name)}</strong>
+      <div class="role">${esc(person.publicRole)}</div>
+      <div class="tagline">${person.expertise.map(x => pill(x, x === 'TBD' ? 'unknown' : 'ok')).join('')}</div>
+      <div class="ask"><b>Ask for:</b> ${esc(person.askFor.join(', '))}</div>
+    </div>
+  `).join('');
+}
+
+function renderCommunicationAndRules() {
+  q('#communication').innerHTML = data.communication.map(c => `<div class="rule"><h3>${esc(c.name)}</h3><div>${esc(c.purpose)}</div><div class="small">${esc(c.type)} · ${esc(c.audience)}</div></div>`).join('');
+  q('#rules').innerHTML = data.rules.map(r => `<div class="rule"><h3>${esc(r.name)} ${pill(r.status, r.status.includes('recommended') ? 'warn' : 'unknown')}</h3><div>${esc(r.note)}</div><div class="small">Applies to: ${esc(r.appliesTo.join(', '))}</div></div>`).join('');
+}
+
+function fillFilters() {
+  const categories = [...new Set(repos.map(r => r.category || 'uncategorized'))].sort();
+  const lifecycles = [...new Set(repos.map(r => r.lifecycle || 'unknown'))].sort();
+  q('#categoryFilter').innerHTML += categories.map(c => `<option value="${esc(c)}">${esc(c)}</option>`).join('');
+  q('#lifecycleFilter').innerHTML += lifecycles.map(c => `<option value="${esc(c)}">${esc(c)}</option>`).join('');
+}
+
+function renderRepoTable() {
+  const search = q('#repoSearch').value.toLowerCase();
+  const category = q('#categoryFilter').value;
+  const lifecycle = q('#lifecycleFilter').value;
+  const visible = repos.filter(repo => {
+    const blob = [repo.name, repo.description, repo.purpose, repo.category, repo.lifecycle, ...(repo.audience ?? [])].join(' ').toLowerCase();
+    return (!search || blob.includes(search)) && (category === 'all' || (repo.category || 'uncategorized') === category) && (lifecycle === 'all' || (repo.lifecycle || 'unknown') === lifecycle);
+  });
+  q('#repoTable tbody').innerHTML = visible.map(repo => {
+    const contacts = (repo.domainContacts ?? []).map(id => byId.get(id)?.name ?? id).join(', ') || 'TBD';
+    return `<tr data-repo="${esc(repo.name)}">
+      <td><a href="${esc(repo.url)}" target="_blank" rel="noreferrer">${esc(repo.name)}</a><br>${repoStatus(repo)}</td>
+      <td>${esc(repo.purpose || repo.description) || '<span class="muted">Purpose not curated yet.</span>'}<br><span class="small">${esc((repo.audience ?? []).join(', '))}</span></td>
+      <td>${pill(repo.category || 'uncategorized')} ${pill(repo.lifecycle || 'unknown', repo.lifecycle ? '' : 'unknown')}</td>
+      <td>${workQueue(repo)}</td>
+      <td>${readiness(repo).html}</td>
+      <td>${esc(contacts)}</td>
+    </tr>`;
+  }).join('');
+  qq('#repoTable tbody tr').forEach(row => row.addEventListener('click', () => inspectRepo(repos.find(r => r.name === row.dataset.repo))));
+}
+
+function renderAttention() {
+  const items = [];
+  for (const repo of repos) {
+    if (!(repo.domainContacts ?? []).length) items.push([repo.name, 'No curated contact / ownership mapping', 'danger']);
+    if (repo.stalePullRequests > 0) items.push([repo.name, `${repo.stalePullRequests} stale open PR(s)`, 'danger']);
+    if (repo.hasCodeowners === false) items.push([repo.name, 'No CODEOWNERS file detected', 'warn']);
+    const days = ageDays(repo.lastPushedAt);
+    if (!repo.archived && days !== null && days > 365) items.push([repo.name, `No push for ${days} days`, 'warn']);
+  }
+  q('#attention').innerHTML = (items.slice(0, 20).map(([name, issue, cls]) => `<div class="attention-item"><b>${esc(name)}</b><span>${pill(issue, cls)}</span></div>`).join('')) || '<p class="muted">No attention items from available data.</p>';
+}
+
+function inspectRepo(repo) {
+  if (!repo) return;
+  const contacts = (repo.domainContacts ?? []).map(id => byId.get(id)?.name ?? id).join(', ') || 'TBD';
+  q('#inspector').innerHTML = `<h2>${esc(repo.name)}</h2>
+    <p>${esc(repo.purpose || repo.description || 'No curated purpose yet.')}</p>
+    <p>${repoStatus(repo)} ${workQueue(repo)} ${readiness(repo).html}</p>
+    <h3>Contacts</h3><p>${esc(contacts)}</p>
+    <h3>External relations</h3><p>${esc((repo.externalRelations ?? []).join(', ')) || 'None curated yet.'}</p>
+    <h3>Detected files</h3><p>${[
+      ['README', repo.hasReadme], ['CONTRIBUTING', repo.hasContributing], ['CODEOWNERS', repo.hasCodeowners], ['SECURITY', repo.hasSecurity], ['dependency bot', repo.hasDependabot || repo.hasRenovate]
+    ].map(([k, v]) => pill(`${k}: ${fmt(v)}`, v === true ? 'ok' : v === false ? 'warn' : 'unknown')).join(' ')}</p>
+    <p><a href="${esc(repo.url)}" target="_blank" rel="noreferrer">Open repository</a></p>`;
+}
+
+function buildGraphNodes(filter) {
+  const nodes = new Map();
+  const links = [];
+  const add = (id, type, label = id) => { if (!nodes.has(id)) nodes.set(id, { id, type, label }); };
+  if (filter === 'all' || filter === 'repositories' || filter === 'externals') add('TYPO3-Documentation', 'org');
+  for (const repo of repos) {
+    if (filter === 'all' || filter === 'repositories') {
+      add(repo.name, 'repo'); links.push(['TYPO3-Documentation', repo.name, 'contains']);
+    }
+    for (const ext of repo.externalRelations ?? []) {
+      if (filter === 'all' || filter === 'externals') { add(repo.name, 'repo'); add(ext, 'external'); links.push([repo.name, ext, 'relates']); }
+    }
+  }
+  for (const rel of data.relations) {
+    if (filter === 'all' || filter === 'externals' || filter === 'people') { add(rel.from, rel.from.includes('#') || rel.from.includes('GitHub') ? 'channel' : 'external'); add(rel.to, 'external'); links.push([rel.from, rel.to, rel.type]); }
+  }
+  if (filter === 'all' || filter === 'people') {
+    add('Documentation Team', 'team');
+    for (const p of data.people) { add(p.name, 'person'); links.push([p.name, 'Documentation Team', p.publicRole]); }
+    for (const c of data.communication) { add(c.name, 'channel'); links.push([c.name, 'Documentation Team', 'channel']); }
+    for (const r of data.rules) { add(r.name, 'rule'); links.push([r.name, 'Documentation Team', 'rule']); }
+  }
+  return { nodes: [...nodes.values()], links: links.filter(([a, b]) => nodes.has(a) && nodes.has(b)).map(([source, target, type]) => ({ source, target, type })) };
+}
+
+function renderGraph() {
+  const svg = q('#graph');
+  const width = svg.clientWidth || 1000;
+  const height = 560;
+  svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
+  svg.innerHTML = '';
+  const { nodes, links } = buildGraphNodes(q('#graphFilter').value);
+  const center = { x: width / 2, y: height / 2 };
+  nodes.forEach((n, i) => {
+    const angle = (Math.PI * 2 * i) / nodes.length;
+    const radius = n.type === 'org' || n.type === 'team' ? 20 : Math.min(width, height) * .38;
+    n.x = center.x + Math.cos(angle) * radius;
+    n.y = center.y + Math.sin(angle) * radius;
+  });
+  const nodeById = new Map(nodes.map(n => [n.id, n]));
+  for (const l of links) {
+    const a = nodeById.get(l.source); const b = nodeById.get(l.target);
+    const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    line.setAttribute('class', 'link'); line.setAttribute('x1', a.x); line.setAttribute('y1', a.y); line.setAttribute('x2', b.x); line.setAttribute('y2', b.y);
+    svg.appendChild(line);
+  }
+  const colors = { repo: '#ff8700', person: '#12b76a', rule: '#f79009', channel: '#7a5af8', external: '#667085', org: '#18202f', team: '#18202f' };
+  for (const n of nodes) {
+    const group = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+    group.setAttribute('class', 'node'); group.setAttribute('transform', `translate(${n.x},${n.y})`);
+    const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    circle.setAttribute('r', n.type === 'org' || n.type === 'team' ? 18 : 10); circle.setAttribute('fill', colors[n.type] || '#999');
+    const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    text.setAttribute('x', 14); text.setAttribute('y', 4); text.textContent = n.label;
+    group.append(circle, text);
+    group.addEventListener('click', () => {
+      const repo = repos.find(r => r.name === n.id);
+      if (repo) inspectRepo(repo); else q('#inspector').innerHTML = `<h2>${esc(n.label)}</h2><p>${pill(n.type)}</p><p class="muted">${esc(n.id)}</p>`;
+    });
+    svg.appendChild(group);
+  }
+}
+
+function renderProvenance() {
+  q('#provenance').textContent = `Generated data source: ${data.settings.source || 'unknown'}; generated at: ${data.settings.generatedAt || 'not yet generated'}; repositories in current data set: ${repos.length}.`;
+}
+
+renderKpis(); renderPeople(); renderCommunicationAndRules(); fillFilters(); renderRepoTable(); renderAttention(); renderGraph(); renderProvenance();
+for (const el of ['#repoSearch', '#categoryFilter', '#lifecycleFilter']) q(el).addEventListener('input', renderRepoTable);
+q('#graphFilter').addEventListener('change', renderGraph);
+window.addEventListener('resize', renderGraph);
+</script>
+</body>
+</html>

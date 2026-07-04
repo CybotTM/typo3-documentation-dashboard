@@ -1,0 +1,72 @@
+[
+  {
+    "id": "lina-wolf",
+    "name": "Lina Wolf",
+    "github": "linawolf",
+    "publicRole": "Documentation Team Leader",
+    "expertise": ["documentation governance", "manual structure", "contributor onboarding"],
+    "askFor": ["documentation team coordination", "general documentation direction", "where a new contributor should start"],
+    "source": "TYPO3 Documentation Team public page",
+    "confidence": "public-team-page"
+  },
+  {
+    "id": "sarah-mccarthy",
+    "name": "Sarah McCarthy",
+    "github": null,
+    "publicRole": "Documentation Team Co-Leader / Native Speaker",
+    "expertise": ["language review", "documentation clarity", "editorial quality"],
+    "askFor": ["English wording", "reader-facing documentation clarity"],
+    "source": "TYPO3 Documentation Team public page",
+    "confidence": "public-team-page"
+  },
+  {
+    "id": "garvin-hicking",
+    "name": "Garvin Hicking",
+    "github": "garvinhicking",
+    "publicRole": "GitHub Administrator",
+    "expertise": ["GitHub organization", "repository settings", "access and permissions"],
+    "askFor": ["GitHub access", "repository settings", "branch/ruleset changes"],
+    "source": "TYPO3 Documentation Team public page",
+    "confidence": "public-team-page"
+  },
+  {
+    "id": "jaap-van-otterdijk",
+    "name": "Jaap Van Otterdijk",
+    "github": null,
+    "publicRole": "Tooling / phpDocumentor",
+    "expertise": ["phpDocumentor", "API documentation", "rendering/tooling"],
+    "askFor": ["phpDocumentor questions", "API rendering", "toolchain questions"],
+    "source": "TYPO3 Documentation Team public page",
+    "confidence": "public-team-page"
+  },
+  {
+    "id": "maike-kiebele",
+    "name": "Maike Kiebele",
+    "github": null,
+    "publicRole": "Documentation Team Member",
+    "expertise": ["TBD"],
+    "askFor": ["TBD"],
+    "source": "TYPO3 Documentation Team public page",
+    "confidence": "public-team-page"
+  },
+  {
+    "id": "sandra-erbel",
+    "name": "Sandra Erbel",
+    "github": null,
+    "publicRole": "Documentation Team Member",
+    "expertise": ["TBD"],
+    "askFor": ["TBD"],
+    "source": "TYPO3 Documentation Team public page",
+    "confidence": "public-team-page"
+  },
+  {
+    "id": "ines-willenbrock",
+    "name": "Ines Willenbrock",
+    "github": null,
+    "publicRole": "Documentation Team Member",
+    "expertise": ["TBD"],
+    "askFor": ["TBD"],
+    "source": "TYPO3 Documentation Team public page",
+    "confidence": "public-team-page"
+  }
+]

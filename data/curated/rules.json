@@ -1,0 +1,42 @@
+[
+  {
+    "id": "contribution-workflow",
+    "name": "Documentation contribution workflow",
+    "category": "contribution",
+    "appliesTo": ["all documentation repositories"],
+    "status": "needs-canonical-url",
+    "url": null,
+    "owner": "documentation-team",
+    "note": "Add the canonical docs.typo3.org contribution guide URL when agreed by the team. Do not duplicate the guide here."
+  },
+  {
+    "id": "repository-ownership",
+    "name": "Repository ownership and CODEOWNERS",
+    "category": "governance",
+    "appliesTo": ["all active repositories"],
+    "status": "recommended",
+    "url": null,
+    "owner": "documentation-team",
+    "note": "Each active content repository should expose responsible reviewers or at least a domain contact. Prefer CODEOWNERS plus curated people mapping."
+  },
+  {
+    "id": "generated-repository-policy",
+    "name": "Generated repository policy",
+    "category": "lifecycle",
+    "appliesTo": ["generated/split repositories"],
+    "status": "recommended",
+    "url": null,
+    "owner": "tooling-maintainers",
+    "note": "Generated repositories should clearly state source-of-truth, update mechanism and whether PRs should target another repository."
+  },
+  {
+    "id": "manual-purpose-statement",
+    "name": "Repository purpose statement",
+    "category": "onboarding",
+    "appliesTo": ["all repositories"],
+    "status": "recommended",
+    "url": null,
+    "owner": "repository-maintainers",
+    "note": "Every repository should have a short README section explaining what it contains, who it is for, how it is published and who reviews changes."
+  }
+]

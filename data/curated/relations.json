@@ -1,0 +1,14 @@
+[
+  { "from": "TYPO3-Documentation", "to": "docs.typo3.org", "type": "publishes-to", "confidence": "known-platform" },
+  { "from": "TYPO3-Documentation", "to": "api.typo3.org", "type": "feeds-or-relates", "confidence": "known-platform" },
+  { "from": "TYPO3CMS-Reference-CoreApi", "to": "TYPO3 Core", "type": "documents", "confidence": "curated" },
+  { "from": "TYPO3CMS-Reference-CoreApi", "to": "docs.typo3.org", "type": "published-on", "confidence": "curated" },
+  { "from": "TYPO3CMS-Reference-Typoscript", "to": "docs.typo3.org", "type": "published-on", "confidence": "curated" },
+  { "from": "TYPO3CMS-Reference-TSconfig", "to": "docs.typo3.org", "type": "published-on", "confidence": "curated" },
+  { "from": "TYPO3CMS-Tutorial-GettingStarted", "to": "docs.typo3.org", "type": "published-on", "confidence": "curated" },
+  { "from": "render-guides", "to": "GitHub Actions", "type": "used-by", "confidence": "curated" },
+  { "from": "render-guides", "to": "docs.typo3.org", "type": "renders-for", "confidence": "curated" },
+  { "from": "TYPO3 Slack #typo3-documentation", "to": "Documentation Team", "type": "communication-channel", "confidence": "public-team-page" },
+  { "from": "GitHub Issues", "to": "TYPO3-Documentation", "type": "work-intake", "confidence": "inferred-standard-github-workflow" },
+  { "from": "GitHub Pull Requests", "to": "TYPO3-Documentation", "type": "change-review", "confidence": "inferred-standard-github-workflow" }
+]

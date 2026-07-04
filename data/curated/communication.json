@@ -1,0 +1,29 @@
+[
+  {
+    "id": "slack-typo3-documentation",
+    "name": "TYPO3 Slack #typo3-documentation",
+    "type": "chat",
+    "audience": "contributors and maintainers",
+    "purpose": "Main public coordination channel for documentation questions and onboarding.",
+    "url": "https://typo3.slack.com/archives/typo3-documentation",
+    "confidence": "public-team-page"
+  },
+  {
+    "id": "github-issues",
+    "name": "GitHub Issues",
+    "type": "async-work",
+    "audience": "repo maintainers and contributors",
+    "purpose": "Repository-specific bugs, content changes, broken examples and implementation discussions.",
+    "url": "https://github.com/TYPO3-Documentation",
+    "confidence": "inferred-standard-github-workflow"
+  },
+  {
+    "id": "github-pull-requests",
+    "name": "GitHub Pull Requests",
+    "type": "review",
+    "audience": "contributors and reviewers",
+    "purpose": "Concrete documentation changes, review discussions and merge readiness.",
+    "url": "https://github.com/TYPO3-Documentation",
+    "confidence": "inferred-standard-github-workflow"
+  }
+]
