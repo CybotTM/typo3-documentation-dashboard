@@ -511,15 +511,18 @@ const clip = (s, n) => s.length > n ? s.slice(0, n - 1) + '…' : s;
 const workSub = r => r ? `${fmt(r.openIssues)}i · ${fmt(r.openPullRequests)}pr` : null;
 const contentRepos = () => activeRepos().filter(r => (r.homepage || '').toLowerCase().includes('docs.typo3.org'));
 
+// Only allow http(s) hrefs — a repo's homepage/url come from the GitHub API and
+// could carry a javascript:/data:/vbscript: scheme.
+const safeHref = u => { try { const p = new URL(u); return (p.protocol === 'https:' || p.protocol === 'http:') ? p.href : null; } catch { return null; } };
 function inode(id) {
-  if (id.startsWith('r:')) { const r = repoByName.get(id.slice(2)); return { type: 'repo', label: cleanName(id.slice(2)), sub: workSub(r), url: r?.url || null }; }
-  if (id.startsWith('m:')) { const r = repoByName.get(id.slice(2)); return { type: 'manual', label: cleanName(id.slice(2)), sub: 'docs.typo3.org', url: r?.homepage || null }; }
-  if (id === RENDER || id === DEPLOY || id === INDEXER) { const r = repoByName.get(id.slice(2)); return { type: 'tool', label: id.slice(2), sub: workSub(r), url: r?.url || null }; }
+  if (id.startsWith('r:')) { const r = repoByName.get(id.slice(2)); return { type: 'repo', label: cleanName(id.slice(2)), sub: workSub(r), url: safeHref(r?.url) }; }
+  if (id.startsWith('m:')) { const r = repoByName.get(id.slice(2)); return { type: 'manual', label: cleanName(id.slice(2)), sub: 'docs.typo3.org', url: safeHref(r?.homepage) }; }
+  if (id === RENDER || id === DEPLOY || id === INDEXER) { const r = repoByName.get(id.slice(2)); return { type: 'tool', label: id.slice(2), sub: workSub(r), url: safeHref(r?.url) }; }
   if (id === PHPDOC) return { type: 'tool', label: PIPE.apiPipeline.tool };
   if (id === CORE) return { type: 'source', label: PIPE.apiPipeline.source, sub: 'source' };
-  if (id === API) return { type: 'system', label: PIPE.apiPipeline.service, url: 'https://' + PIPE.apiPipeline.service };
+  if (id === API) return { type: 'system', label: PIPE.apiPipeline.service, url: safeHref('https://' + PIPE.apiPipeline.service) };
   if (id === SEARCH) return { type: 'output', label: PIPE.searchService };
-  return { type: 'output', label: id.replace(/^s:/, ''), url: 'https://' + id.replace(/^s:/, '') };
+  return { type: 'output', label: id.replace(/^s:/, ''), url: safeHref('https://' + id.replace(/^s:/, '')) };
 }
 const impColor = t => ({ repo: '#334155', tool: '#7a5af8', system: '#0e9384', output: '#d1620a', manual: '#d1620a', source: '#8a8172' }[t] || '#667085');
 
@@ -614,7 +617,7 @@ function renderImpact(sel) {
     } else { g.addEventListener('click', () => renderImpact(id)); svg.appendChild(g); } }
   const isAll = sel === '*';
   const selType = isAll ? null : inode(sel).type;
-  const selUrl = isAll ? null : ((selType === 'repo' || selType === 'manual') ? (repoByName.get(sel.slice(2))?.homepage || null) : inode(sel).url);
+  const selUrl = isAll ? null : ((selType === 'repo' || selType === 'manual') ? safeHref(repoByName.get(sel.slice(2))?.homepage) : inode(sel).url);
   const linkLabel = (selType === 'repo' || selType === 'manual') ? 'Open the published page' : `Open ${inode(sel || 's:x').label}`;
   q('#readout').innerHTML =
     `<div class="r-eye">${esc(P.eye)}</div><h3>${esc(isAll ? 'Everything' : inode(sel).label)}</h3><p>${P.sentence}</p>` +
