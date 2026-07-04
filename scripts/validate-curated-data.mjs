@@ -18,11 +18,10 @@ function fail(message) {
 }
 
 async function loadJson(file) {
-  const text = await readFile(path.join(root, file), 'utf8');
   try {
-    return JSON.parse(text);
+    return JSON.parse(await readFile(path.join(root, file), 'utf8'));
   } catch (error) {
-    fail(`${file} is not valid JSON: ${error.message}`);
+    fail(`${file} could not be read or parsed: ${error.message}`);
     return null;
   }
 }

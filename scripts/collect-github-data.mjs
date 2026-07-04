@@ -61,12 +61,17 @@ async function graphql(query, variables, { attempt = 1 } = {}) {
 
 async function paged(url) {
   const items = [];
-  for (let page = 1; page < 20; page += 1) {
+  const maxPages = 50;
+  let page = 1;
+  for (; page <= maxPages; page += 1) {
     const separator = url.includes('?') ? '&' : '?';
     const batch = await request(`${url}${separator}per_page=100&page=${page}`);
     if (!Array.isArray(batch) || batch.length === 0) break;
     items.push(...batch);
     if (batch.length < 100) break;
+  }
+  if (page > maxPages) {
+    console.warn(`Warning: paged(${url}) hit the ${maxPages}-page cap (${items.length} items); results may be truncated.`);
   }
   return items;
 }
